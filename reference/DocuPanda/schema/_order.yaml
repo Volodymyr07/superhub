@@ -1,0 +1,8 @@
+- postrefineschema
+- postschemaautogenerate
+- getschemaautogeneratejob
+- deleteschema
+- getschema
+- getschemabyid
+- listschemas
+- postupdateschema
