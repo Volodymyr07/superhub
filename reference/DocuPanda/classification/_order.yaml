@@ -1,0 +1,6 @@
+- postaddclass
+- deleteclass
+- listclasses
+- postexpandtaxonomy
+- postclassifybatch
+- getclassifyjob
