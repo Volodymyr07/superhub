@@ -9,3 +9,14 @@
 - postsplit
 - getsplitjob
 - getdocumentsummary
+- postdocument-1
+- getdocument-1
+- deletedocument-1
+- downloadoriginalurl-1
+- downloadocrurl-1
+- listdocuments-1
+- deletedocuments-1
+- listdatasets-1
+- postsplit-1
+- getsplitjob-1
+- getdocumentsummary-1

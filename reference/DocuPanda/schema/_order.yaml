@@ -6,3 +6,12 @@
 - getschemabyid
 - listschemas
 - postupdateschema
+- postrefineschema-1
+- postschemaautogenerate-1
+- getschemaautogeneratejob-1
+- deleteschema-1
+- getschema-1
+- getschemabyid-1
+- listschemas-1
+- postschema
+- postupdateschema-1
