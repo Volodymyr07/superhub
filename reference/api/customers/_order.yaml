@@ -1,0 +1,9 @@
+- getcustomer
+- getcustomerpaymentbyid
+- gethistory
+- deletecard
+- getcheckoutbalances
+- addbankaccount
+- deletebankaccount
+- addiban
+- deleteiban

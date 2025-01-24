@@ -1,0 +1,7 @@
+- createplan
+- getplans
+- updateplan
+- deactivateplan
+- getsubscriptions
+- getsubscriptionpayments
+- cancelsubscription
