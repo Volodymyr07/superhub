@@ -56,6 +56,14 @@ paths:
             example: application/json
       x-readme:
         proxy-enabled: true
+        code-samples:
+          - language: curl
+            name: Proxy cURL Example (Sticky Session)
+            code: |
+              curl -x "http://premium-residential.geonode.com:10000" \
+                   --header "Accept: application/json" \
+                   --header "Authorization: Basic {base64_encoded_credentials}" \
+                   --url "http://ip-api.com/json"
       responses:
         '200':
           description: Sticky session created successfully.
