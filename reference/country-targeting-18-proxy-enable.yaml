@@ -4,38 +4,48 @@ info:
   title: Geonode Sticky Session API
   description: |
     API for creating a new sticky session in Geonode's proxy service.
-
 servers:
   - url: http://ip-api.com/json
     description: IP Geolocation API
-
 paths:
   /:
     get:
       summary: Create a New Sticky Session
-      description: |
+      description: >
         Create a new sticky session using proxy credentials.
 
+
         ## Sticky Ports:
-        Geonode provides specific ports for sticky sessions, ensuring a persistent IP session:
+
+        Geonode provides specific ports for sticky sessions, ensuring a
+        persistent IP session:
+
 
         - **HTTP/HTTPS:** 10000 - 10900
+
         - **SOCKS5:** 12000 - 12010
+
 
         Use sticky ports when you need a stable IP for session-based activities.
 
+
         **Authentication & Proxy Setup:**
+
         - **Proxy (`-x`)**: `http://premium-residential.geonode.com:10000`
-        - **Authorization Header**: Automatically generated from ReadMe authentication when username and password are entered.
+
+        - **Authorization Header**: Automatically generated from ReadMe
+        authentication when username and password are entered.
+
 
         **Example `cURL` Request to Create a Sticky Session:**
+
         ```sh
+
         curl -x "http://premium-residential.geonode.com:10000" \
              -U "myUsername-country-US-session-random0001:myPassword" \
              --url "http://ip-api.com/json" \
              --header "Accept: application/json"
         ```
-
       parameters:
         - name: Accept
           in: header
@@ -44,9 +54,8 @@ paths:
           schema:
             type: string
             example: application/json
-
       x-readme:
-        proxy-enabled: true
+        proxy-enabled: false
         code-samples:
           - language: curl
             name: Proxy cURL Example (Sticky Session)
@@ -55,7 +64,6 @@ paths:
                    --header "Accept: application/json" \
                    --header "Authorization: Basic {base64_encoded_credentials}" \
                    --url "http://ip-api.com/json"
-
       responses:
         '200':
           description: Sticky session created successfully.
@@ -82,16 +90,16 @@ paths:
           description: Unauthorized access due to invalid credentials.
         '500':
           description: Internal server error.
-
       security:
         - BasicAuth: []
-
 components:
   securitySchemes:
     BasicAuth:
       type: http
       scheme: basic
-      description: |
-        Basic authentication is required. Enter your **username** and **password** in ReadMe.
-        The `Authorization` header will be automatically generated in the `cURL` request.
+      description: >
+        Basic authentication is required. Enter your **username** and
+        **password** in ReadMe.
 
+        The `Authorization` header will be automatically generated in the `cURL`
+        request.
