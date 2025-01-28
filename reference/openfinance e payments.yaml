@@ -1,0 +1,2270 @@
+openapi: 3.1.0
+info:
+    title: openfinance e payments
+    version: '1'
+    description: Endpoints das APIs de banking do BTG PACTUAL Empresas
+    termsOfService: 'https://www.btgpactual.com/empresas/termos-e-politicas/'
+servers:
+    -
+        url: 'https://api.sandbox.empresas.btgpactual.com'
+        description: ''
+    -
+        url: 'https://api.empresas.btgpactual.com'
+        description: ''
+paths:
+    '/{companyId}/banking/payments':
+        get:
+            tags:
+                - Pagamentos
+            parameters:
+                -
+                    name: companyId
+                    schema:
+                        $ref: '#/components/schemas/CompanyId'
+                    in: path
+                    required: true
+                -
+                    examples:
+                        numberExample:
+                            value: '10'
+                    name: pageSize
+                    description: Número de itens a serem incluidos na página
+                    schema:
+                        type: number
+                    in: query
+                    required: true
+                -
+                    examples:
+                        numberExample:
+                            value: '1'
+                    name: pageNumber
+                    description: Número da página onde começará a query
+                    schema:
+                        type: number
+                    in: query
+                    required: true
+                -
+                    name: paymentType
+                    description: Tipo do pagamento(TED, PIX_MANUAL, etc...)
+                    schema:
+                        type: string
+                    in: query
+                    required: false 
+                -
+                    name: taxId
+                    description: CNPJ 
+                    schema:
+                        type: string
+                    example: '12341234123422'
+                    in: query
+                    required: false
+                -
+                    name: batchId
+                    description: Id do lote de transferências/pagamentos
+                    example: '1341bwef-124qwebd-234qsddfq'
+                    schema:
+                        type: string
+                    in: query    
+                    required: false
+                -
+                    name: paymentDate
+                    description: Data de pagamento
+                    example: '2024-09-10'
+                    schema:
+                        type: string
+                    in: query
+                    required: false
+                -
+                    name: correlationId
+                    description: Id de correlação do pagamentos/transferências
+                    example: '13498747db-827462bd'
+                    schema: 
+                        type: string
+                    in: query
+                    required: false
+                -
+                    name: status
+                    description: Status do pagamento ou transferências
+                    example: 'CONFIRMED'
+                    schema:
+                        type: string
+                    in: query
+                    required: false
+
+
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/BankSlipPaymentCollection'
+                    description: Lista de Pagamentos
+                '401':
+                    description: Unauthorized
+                '403':
+                    description: Forbidden
+            security:
+                -
+                    oauth2:
+                        - openid empresas.btgpactual.com/payments.readonly
+                        - openid empresas.btgpactual.com/payments
+            summary: Listar iniciação de pagamento ou transferência
+        post:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/BankSlipPaymentBatch'
+                required: true
+            tags:
+                - Pagamentos
+            parameters:
+                -
+                    name: companyId
+                    schema:
+                        $ref: '#/components/schemas/CompanyId'
+                    in: path
+                    required: true
+                -   
+                    name: x-idempotency-key
+                    schema:
+                        $ref: '#/components/schemas/XIdempotencyKey'
+                    in: header 
+                    required: false       
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/BankSlipBatchResponse'
+                    description: Iniciação de Pagamento
+                '401':
+                    description: Unauthorized
+                '403':
+                    description: Forbidden
+            security:
+                -
+                    oauth2:
+                        - openid empresas.btgpactual.com/payments
+            summary: Criar iniciação de pagamento ou transferência
+        parameters:
+            -
+                name: companyId
+                schema:
+                    $ref: '#/components/schemas/CompanyId'
+                in: path
+                required: true
+    '/{companyId}/banking/payments/{paymentId}':
+        get:
+            tags:
+                - Pagamentos
+            parameters:
+                -
+                    name: companyId
+                    schema:
+                        $ref: '#/components/schemas/CompanyId'
+                    in: path
+                    required: true
+                -
+                    name: paymentId
+                    schema:
+                        $ref: '#/components/schemas/PaymentId'
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/BankSlipPayment'
+                    description: Pagamento
+                '401':
+                    description: Unauthorized
+                '403':
+                    description: Forbidden
+            security:
+                -
+                    oauth2:
+                        - openid empresas.btgpactual.com/payments.readonly
+                        - openid empresas.btgpactual.com/payments
+            summary: Listar um pagamento ou transferência específico
+        delete:
+            tags:
+                - Pagamentos
+            parameters:
+                -
+                    name: companyId
+                    schema:
+                        $ref: '#/components/schemas/CompanyId'
+                    in: path
+                    required: true
+                -
+                    name: paymentId
+                    schema:
+                        $ref: '#/components/schemas/PaymentId'
+                    in: path
+                    required: true    
+            responses:
+                '204':
+                    description: Exclusão do agendamento
+                '401':
+                    description: Unauthorized
+                '403':
+                    description: Forbidden
+            security:
+                -
+                    oauth2:
+                        - openid empresas.btgpactual.com/payments
+            summary: Cancelar um pagamento ou transferência agendado
+        parameters:
+            -
+                name: companyId
+                schema:
+                    $ref: '#/components/schemas/CompanyId'
+                in: path
+                required: true
+            -
+                name: paymentId
+                schema:
+                    $ref: '#/components/schemas/PaymentId'
+                in: path
+                required: true
+            -   
+                name: x-idempotency-key
+                schema:
+                    $ref: '#/components/schemas/XIdempotencyKey'
+                in: header     
+    '/{companyId}/banking/payments/barcodes':
+        get:
+            tags:
+                - Pagamentos
+            parameters:
+                -
+                    name: companyId
+                    schema:
+                        $ref: '#/components/schemas/CompanyId'
+                    in: path
+                    required: true
+                -
+                    examples:
+                        barcode example:
+                            value: 123464358568312341634-fbs-12343464
+                    name: codes
+                    description: Código de barras
+                    schema:
+                        type: string
+                    in: query
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/BankSlipPaymentResponse'
+                    description: Consulta bem sucedida
+            summary: Consulta por código de barras
+    '/{companyId}/banking/payments/approvals/{paymentId}':
+        delete:
+            tags:
+                - Pagamentos
+            responses:
+                '200':
+                    description: Cancelamento bem sucedido
+            summary: Cancelar pagamento ou transferência pendente de aprovação
+        parameters:
+            -
+                name: companyId
+                schema:
+                    $ref: '#/components/schemas/CompanyId'
+                in: path
+                required: true
+            -
+                name: paymentId
+                schema:
+                    $ref: '#/components/schemas/PaymentId'
+                in: path
+                required: true
+            -   
+                name: x-idempotency-key
+                schema:
+                    $ref: '#/components/schemas/XIdempotencyKey'
+                in: header     
+    '/{companyId}/banking/payments/{paymentId}/receipt':
+        get:
+            tags:
+                - Pagamentos
+            parameters:
+                -
+                    name: paymentId
+                    description: Identificador do pagamento
+                    schema:
+                        $ref: '#/components/schemas/PaymentId'
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/pdf:
+                            examples:
+                                PDF:
+                                    value: Retorna um binário de PDF
+                    description: Retorno de recibo em JSON ou PDF
+            summary: Obter recibo
+        parameters:
+            -
+                name: companyId
+                description: ''
+                schema:
+                    $ref: '#/components/schemas/CompanyId'
+                in: path
+                required: true
+            -
+                name: paymentId
+                schema:
+                    $ref: '#/components/schemas/PaymentId'
+                in: path
+                required: true
+    '/v1/accounts/{accountId}':
+        get:
+            tags:
+                - Saldo e Extrato
+            parameters:
+                -
+                    name: accountId
+                    schema:
+                        $ref: '#/components/schemas/AccountId'
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/BusinessAccount'
+                    description: Business Account Data
+                '401':
+                    description: Unauthorized
+                '403':
+                    description: Forbidden
+            summary: Consultar conta por AccountId
+        parameters:
+            -
+                name: accountId
+                schema:
+                    $ref: '#/components/schemas/AccountId'
+                in: path
+                required: true
+    '/v1/accounts/{accountId}/balances':
+        get:
+            tags:
+                - Saldo e Extrato
+            parameters:
+                -
+                    name: accountId
+                    schema:
+                        $ref: '#/components/schemas/AccountId'
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AccountBalance'
+                    description: Account balance
+                '401':
+                    description: Unauthorized
+                '403':
+                    description: Forbidden
+            summary: Consultar saldo de uma conta
+        parameters:
+            -
+                name: accountId
+                schema:
+                    $ref: '#/components/schemas/AccountId'
+                in: path
+                required: true
+    '/v1/accounts/{accountId}/statements':
+        get:
+            tags:
+                - Saldo e Extrato
+            parameters:
+                -
+                    name: accountId
+                    schema:
+                        $ref: '#/components/schemas/AccountId'
+                    in: path
+                    required: true
+                -    
+                    name: startDate
+                    schema:
+                        type: string
+                        example: 2028-12-16
+                        description: Começo do período de filtragem
+                    in: query
+                    required: false
+                -    
+                    name: endDate
+                    schema: 
+                        type: string
+                        example: 2028-12-17
+                        description: Final do período de filtragem
+                    in: query
+                    required: false 
+                -
+                    name: type
+                    schema:
+                        enum:
+                            - withdraw-application
+                    description: Listagem de extrato com rendimentos
+                    in: query     
+                    required: false           
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AccountStatement'
+                        application/csv:
+                            schema:
+                                $ref: '#/components/schemas/AccountStatementFile'
+                        application/pdf:
+                            schema:
+                                $ref: '#/components/schemas/AccountStatementFile'
+                    description: Account statements
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/BadRequest'
+                    description: Bad Request
+                '401':
+                    description: Unauthorized
+                '403':
+                    description: Forbidden
+            summary: Consultar extrato de uma conta
+        parameters:
+            -
+                name: accountId
+                schema:
+                    $ref: '#/components/schemas/AccountId'
+                in: path
+                required: true
+    /v1/accounts:
+        get:
+            tags:
+                - Saldo e Extrato
+            parameters:
+                -
+                    name: origin
+                    description: Parâmetro para identificar o fluxo originario dos dados da conta.
+                    schema:
+                        enum:
+                            - OPEN_FINANCE
+                        type: string
+                    in: query
+                    required: false
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/BusinessAccount'
+                    description: List of available business accounts
+                '401':
+                    description: Unauthorized
+                '403':
+                    description: Forbidden
+            summary: Consultar contas que concederam acesso
+    /v1/accounts/statements:
+        get:
+            tags:
+                - Saldo e Extrato
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AccountStatement'
+                        application/csv:
+                            schema:
+                                $ref: '#/components/schemas/AccountStatementFile'
+                        application/pdf:
+                            schema:
+                                $ref: '#/components/schemas/AccountStatementFile'
+                    description: Account statements
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/BadRequest'
+                    description: Bad Request
+                '401':
+                    description: Unauthorized
+                '403':
+                    description: Forbidden
+            summary: Consultar extrato de uma conta
+    /v1/accounts/balances:
+        get:
+            tags:
+                - Saldo e Extrato
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AccountBalance'
+                    description: Account balance
+                '401':
+                    description: Unauthorized
+                '403':
+                    description: Forbidden
+            summary: Consultar saldo de uma conta
+components:
+    schemas:
+        XIdempotencyKey:
+            type: string
+            example: f08jjj6b-00bc-1e3e-ad99-acb353333914
+        URL:
+            type: string
+            example: >-
+                https://static.uat.com/pix/dynamic/qrcode/37297902000141/4c972de4-3842-4b89-a2de-99f749a78950.png
+        CompanyId:
+            description: CNPJ da empresa realizando a requisição.
+            type: string
+            example: '30306294000145'
+        LocationId:
+            type: string
+            example: b226b648-9410-42d3-88f3-497c23608a3d
+        PostLocationRequest:
+            required:
+                - type
+            type: object
+            properties:
+                type:
+                    type: string
+                    example: cob
+                description:
+                    type: string
+                    example: descrição de exemplo
+        PostLocationResponse:
+            type: object
+            properties:
+                id:
+                    $ref: '#/components/schemas/LocationId'
+                type:
+                    type: string
+                    example: cob
+                taxId:
+                    type: string
+                    example: '30306294000145'
+                url:
+                    $ref: '#/components/schemas/URL'
+                description:
+                    type: string
+                    example: descrição de exemplo
+                image:
+                    format: byte
+                    type: string
+                    example: iVBORw0KGgoAAAANSUhE...
+        DeleteLocationResponse:
+            type: object
+            properties:
+                id:
+                    $ref: '#/components/schemas/LocationId'
+                type:
+                    type: string
+                    example: cob
+                taxId:
+                    type: string
+                    example: '30306294000145'
+        Location:
+            type: object
+            properties:
+                id:
+                    $ref: '#/components/schemas/LocationId'
+                type:
+                    type: string
+                    example: cob
+                taxId:
+                    type: string
+                    example: '30306294000145'
+                url:
+                    $ref: '#/components/schemas/URL'
+        LocationsCollection:
+            type: object
+            properties:
+                data:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Location'
+        PostInstantCollections:
+            required:
+                - amount
+                - pixKey
+            type: object
+            properties:
+                pixKey:
+                    type: string
+                    example: 13a066bc-1d02-464a-bed9-c98211a00934
+                locationId:
+                    $ref: '#/components/schemas/LocationId'
+                expiresIn:
+                    default: 86400
+                    type: number
+                amount:
+                    type: object
+                    properties:
+                        original:
+                            type: number
+                            example: 12.45
+                        allowCustomerChangeValue:
+                            type: boolean
+                displayText:
+                    type: string
+                    example: Pix de Teste
+                payer:
+                    $ref: '#/components/schemas/PayerPix'
+                tags:
+                    type: object
+                    additionalProperties:
+                        type: string
+                    example:
+                        id: 9ee39748ab664c1390e004470e19facf
+                        order: 123456
+                        customerId: 9482392
+        GetInstantCollectionsResponse:
+            type: object
+            properties:
+                data:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/InstantCollection'
+        InstantCollection:
+            type: object
+            properties:
+                id:
+                    type: string
+                    example: 5d4b6d6f-2912-420d-8914-bec4a28dd959
+                _emv:
+                    type: string
+                    example: 8gfui34f3827gfu3
+                txId:
+                    type: string
+                    example: 58816103c8b44bafbd751c2d679bdad1
+                status:
+                    type: string
+                    example: PAID
+                displayText:
+                    type: string
+                    example: Pix de Teste
+                expiresIn:
+                    default: 86400
+                    type: number
+                cratedAt:
+                    format: datetime
+                    type: string
+                    example: '2022-08-30T19:17:02.6731666Z'
+                pixKey:
+                    type: string
+                    example: 13a066bc-1d02-464a-bed9-c98211a00934
+                paidAt:
+                    format: datetime
+                    type: string
+                    example: '2022-08-30T19:17:02.6731666Z'
+                paidAmount:
+                    type: number
+                    example: 23.21
+                payee:
+                    $ref: '#/components/schemas/BankAccount'
+                payer:
+                    $ref: '#/components/schemas/PayerPix'
+                paidBy:
+                    $ref: '#/components/schemas/BankAccount'
+                amount:
+                    type: object
+                    properties:
+                        value:
+                            type: number
+                            example: 25.03
+                        allowCustomerChangeValue:
+                            default: true
+                            type: boolean
+                location:
+                    type: object
+                    properties:
+                        id:
+                            type: string
+                            example: 6fe0cd21-2a47-4b82-9188-b4dbfc271e89
+                        type:
+                            type: string
+                            example: cob
+                        taxId:
+                            type: string
+                            example: 37297902000141
+                        url:
+                            $ref: '#/components/schemas/URL'
+        PayerPix:
+            type: object
+            properties:
+                name:
+                    type: string
+                    example: Fulano de Tal
+                taxId:
+                    type: string
+                    example: 11111111111
+        BankAccount:
+            type: object
+            properties:
+                taxId:
+                    type: string
+                    example: 30306294000145
+                bankCode:
+                    type: string
+                    example: 208
+                name:
+                    type: string
+                    example: Teste
+                currency:
+                    type: string
+                    example: BRL
+                branchCode:
+                    type: string
+                    example: 50
+                number:
+                    type: string
+                    example: 1234567
+        AccountId:
+            pattern: >-
+                ^(?<taxId>([0-9]{14})|([0-9]{11}))[-](?<bankCode>[0-9]{3})-(?<branchCode>[0-9]+)-(?<number>[0-9]+)$
+            type: string
+            example: 37297902000141-208-50-003886850
+        UpdateBankSlip:
+            required:
+                - amount
+                - dueDate
+                - interests
+                - discounts
+            type: object
+            properties:
+                amount:
+                    format: decimal
+                    description: Valor da cobrança.
+                    type: number
+                    example: 1500
+                dueDate:
+                    format: date
+                    description: Data de vencimento do boleto.
+                    type: string
+                    example: '2021-04-02'
+                interests:
+                    description: Juros e multas.
+                    type: object
+                    properties:
+                        arrears:
+                            $ref: '#/components/schemas/InterestRate'
+                        penalty:
+                            $ref: '#/components/schemas/InterestRate'
+                discounts:
+                    description: Descontos aplicados.
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Discount'
+        DeliveryMedium:
+            enum:
+                - EMAIL
+            type: string
+        Status:
+            description: Status dos boletos. Estão disponíveis webhooks para cada status.
+            enum:
+                - REQUEST_SUCCESS
+                - REQUEST_ERROR
+                - PROCESSING
+                - CREATED
+                - FAILED
+                - UPDATED
+                - UPDATE_FAILED
+                - CANCELING
+                - CANCELED
+                - CANCEL_FAILED
+                - PROCESSING_PAYMENT
+                - PAID
+                - REVERSED
+                - REJECTED
+            type: string
+        Discount:
+            type: object
+            properties:
+                value:
+                    description: Valor do desconto aplicado.
+                    type: number
+                    example: '1'
+                type:
+                    description: Tipo de desconto.
+                    default: PERCENTAGE
+                    enum:
+                        - PERCENTAGE
+                        - FIXED_VALUE
+                        - NOT_APPLICABLE
+                    type: string
+                dueDate:
+                    format: date
+                    description: Data limite para aplicação do desconto.
+                    type: string
+                    example: '2099-12-29'
+        Address:
+            required:
+                - zipCode
+                - city
+                - state
+                - street
+                - number
+            type: object
+            properties:
+                zipCode:
+                    description: CEP
+                    type: string
+                    example: '11122233344'
+                city:
+                    description: Cidade
+                    type: string
+                    example: São Paulo
+                state:
+                    description: Estado
+                    type: string
+                    example: SP
+                street:
+                    description: Logradouro
+                    type: string
+                    example: Av. Brigadeiro Faria Lima
+                number:
+                    description: Número
+                    type: string
+                    example: '32'
+        PayerBoleto:
+            description: 'Representa o sacado, entidade pagadora do boleto.'
+            required:
+                - name
+                - taxId
+            type: object
+            properties:
+                name:
+                    description: Nome do sacado.
+                    type: string
+                    example: Nome
+                email:
+                    description: Email do sacado.
+                    type: string
+                    example: examplo@example.com
+                taxId:
+                    description: Documento CPF do Sacado
+                    type: string
+                    example: '1234565432'
+                phoneNumber:
+                    description: Telefone do sacado
+                    type: string
+                    example: '1123239898'
+                address:
+                    $ref: '#/components/schemas/Address'
+        InterestRate:
+            description: Taxa de Juros
+            required:
+                - value
+                - type
+            type: object
+            properties:
+                value:
+                    description: Valor da taxa de juros
+                    type: number
+                    example: '1.1'
+                type:
+                    description: Tipo de aplicacão do juros
+                    default: PERCENTAGE
+                    enum:
+                        - PERCENTAGE
+                        - FIXED_VALUE
+                        - NOT_APPLICABLE
+                    type: string
+        BankSlipId:
+            format: uuid
+            description: Identificador único do boleto
+            type: string
+        BankSlipPaging:
+            description: Estrutura paginada da lista de boletos.
+            type: object
+            properties:
+                paging:
+                    $ref: '#/components/schemas/Paging'
+                data:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/BankSlip'
+        BankSlipPostResponse:
+            type: object
+            properties:
+                correlationId:
+                    type: string
+                    example: rrt-2106146278913941374-c-gsa1-8817-29595835-1
+                bankSlipId:
+                    $ref: '#/components/schemas/BankSlipId'
+                status:
+                    type: string
+                    example: CREATED
+                digitableLine:
+                    type: string
+                    example: 0
+                barCode:
+                    type: string
+                    example: 0
+                ourNumber:
+                    type: string
+                    example: 0
+                ourNumberDigit:
+                    type: string
+                pixInfo:
+                    type: string
+        BankSlipBatchResponse:
+            required:
+                - operationNeedsApproval
+            type: object
+            properties:
+                batchId:
+                    description: ''
+                    type: string
+                    example: b9123459b123-123pgsf
+                contractGuid:
+                    description: ''
+                    type: string
+                    example: 123434545gpa234
+                operationNeedsApproval:
+                    description: ''
+                    type: boolean
+                    example: 'true'
+        BankSlip:
+            type: object
+            properties:
+                bankSlipId:
+                    $ref: '#/components/schemas/BankSlipId'
+                correlationId:
+                    type: string
+                    example: rrt-2106146278913941374-c-gsa1-8817-29595835-1
+                createdAt:
+                    format: datetime
+                    description: Data de criação do boleto.
+                    type: string
+                updatedAt:
+                    format: datetime
+                    description: Data de atualização do boleto.
+                    type: string
+                paidAt:
+                    nullable: true
+                    format: datetime
+                    description: Data de pagamento do boleto.
+                    type: string
+                payer:
+                    $ref: '#/components/schemas/PayerBoleto'
+                referenceNumber:
+                    description: Campo utilizado para controles internos do cliente.
+                    type: string
+                digitableLine:
+                    description: Linha digitavel do boleto.
+                    type: string
+                barCode:
+                    description: Código de barras.
+                    type: string
+                amount:
+                    format: decimal
+                    description: Valor em reais a ser cobrado.
+                    type: number
+                status:
+                    $ref: '#/components/schemas/Status'
+                dueDate:
+                    format: date
+                    description: Data de vencimento.
+                    type: string
+                interest:
+                    description: Juros e multas.
+                    type: object
+                    properties:
+                        arrears:
+                            $ref: '#/components/schemas/Discount'
+                        penalty:
+                            $ref: '#/components/schemas/Discount'
+                discounts:
+                    description: Condições de desconto aplicadas. Deve ser aplicada no máximo uma.
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/InterestRate'
+        Paging:
+            type: object
+            properties:
+                total:
+                    type: number
+                limit:
+                    type: number
+                offset:
+                    type: number
+        ExternalId:
+            type: string
+            example: 8725b04c-1354-4ad7-91db-4bbb2138e390
+        OriginTransactionId:
+            type: string
+            example: 48b33060-7960-4093-bc93-ed9105c3c657
+        PaymentId:
+            type: string
+            example: 29d42888-a920-4a85-a163-aa25b4937b3f
+        DigitableLine:
+            description: Linha digitavel
+            type: string
+            example: '20890050091195069626700021179601493360000000001'
+        Barcode:
+            description: Código de barras
+            type: string
+            example: '20894931200004935000050017010554970003849530'
+        Money:
+            type: number
+            example: 0.01
+        BankSlipPayment:
+            type: object
+            properties:
+                paymentId:
+                    $ref: '#/components/schemas/PaymentId'
+                type:
+                    $ref: '#/components/schemas/Type'
+                status:
+                    $ref: '#/components/schemas/PaymentStatus'
+                amount:
+                    $ref: '#/components/schemas/Money'
+                debitParty:
+                    type: object
+                    properties:
+                        taxId:
+                            type: string
+                            example: '00000000000141'
+                        name:
+                            type: string
+                            example: NOME DA EMPRESA
+                        number:
+                            type: string
+                            example: '000000050'
+                        branchCode:
+                            type: string
+                            example: '50'
+                        bankCode:
+                            type: string
+                            example: '208'
+                detail:
+                    type: object
+                    properties:
+                        digitableLine:
+                            $ref: '#/components/schemas/DigitableLine'
+                        dueDate:
+                            $ref: '#/components/schemas/Date'
+                        payee:
+                            $ref: '#/components/schemas/Payee'
+                tags:
+                    type: object
+                    properties:
+                        externalId:
+                            $ref: '#/components/schemas/ExternalId'
+                        originTransactionId:
+                            $ref: '#/components/schemas/OriginTransactionId'
+                paymentDate:
+                    format: date
+                    type: string
+                    example: '2023-03-20T00:00:00.000Z'
+        Type:
+            description: Boleto de cobrança
+            enum:
+                - BANKSLIP
+                - PIX_QR_CODE
+                - UTILITIES
+                - TED
+                - PIX
+            type: string
+        PaymentStatus:
+            description: Status do pagamento
+            enum:
+                - CONFIRMED
+                - CREATED
+                - CANCELED
+                - FAILED
+                - PROCESSED
+                - ADJOURNED
+                - REVERTED
+                - SCHEDULED
+            type: string
+            example: CREATED
+        BankSlipPaymentCollection:
+            type: object
+            properties:
+                data:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/BankSlipPayment'
+                _links:
+                    type: object
+                    properties:
+                        next:
+                            type: object
+                            properties:
+                                href:
+                                    type: string
+                                    example: >-
+                                        /v1/companies/30306294000145/payments?cursor=cGFnZT0yJml0ZW1zUGVyUGFnZT0xMCZ0eXBlPW51bGwmc3RhdHVzPVNFTlQ=
+                                method:
+                                    type: string
+                                    example: GET
+        ApprovalCollection:
+            type: object
+            properties:
+                data:
+                    type: array
+                    items:
+                        type: object
+                        properties:
+                            approvalId:
+                                type: string
+                                example: cce9e70b-1fdf-4ce0-a01a-d995d7c48e46
+                            status:
+                                type: string
+                                example: Authorized
+                            createdAt:
+                                $ref: '#/components/schemas/DateAt'
+                            updatedAt:
+                                $ref: '#/components/schemas/DateAt'
+                            items:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/BankSlipPayment'
+                            tags:
+                                type: object
+                                properties:
+                                    externalId:
+                                        $ref: '#/components/schemas/ExternalId'
+                _links:
+                    $ref: '#/components/schemas/ApprovalLink'
+        Date:
+            format: date
+            type: string
+            example: '2023-05-03'
+        DateAt:
+            format: date
+            type: string
+            example: '2023-05-03T19:45:21.862156'
+        ApprovalLink:
+            type: object
+            properties:
+                next:
+                    type: object
+                    properties:
+                        href:
+                            type: string
+                            example: >-
+                                /v1/companies/30306294000145/approvals?cursor=cGFnZT0yJml0ZW1zUGVyUGFnZT0xMCZ0eXBlPW51bGwmc3RhdHVzPVNFTlQ=
+                        method:
+                            type: string
+                            example: GET
+        Payee:
+            type: object
+            properties:
+                socialName:
+                    type: string
+                    example: NOME DA EMPRESA
+                fantasyName:
+                    type: string
+                    example: NOME DA EMPRESA
+                taxId:
+                    type: string
+                    example: '00000000000145'
+                bankCode:
+                    type: string
+                    example: '208'
+        BankSlipPaymentBatch:
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/PaymentBody-complete'
+        BankSlipPaymentBatchResponse:
+            type: object
+            properties:
+                tags:
+                    type: object
+                    properties:
+                        externalId:
+                            $ref: '#/components/schemas/ExternalId'
+        BankSlipPaymentResponseLink:
+            type: object
+            properties:
+                getApproval:
+                    type: object
+                    properties:
+                        href:
+                            type: string
+                            example: >-
+                                /companies/30306294000145/payments/approvals?externalId=8725b04c-1354-4ad7-91db-4bbb2138e390
+                        method:
+                            type: string
+                            example: GET
+        BankSlipPaymentResponse:
+            type: object
+            properties:
+                data:
+                    type: array
+                    items:
+                        type: object
+                        properties:
+                            amount:
+                                $ref: '#/components/schemas/Money'
+                            interest:
+                                $ref: '#/components/schemas/Money'
+                            fine:
+                                $ref: '#/components/schemas/Money'
+                            discount:
+                                $ref: '#/components/schemas/Money'
+                            barcode:
+                                $ref: '#/components/schemas/Barcode'
+                            digitableLine:
+                                $ref: '#/components/schemas/DigitableLine'
+                            dueDate:
+                                $ref: '#/components/schemas/Date'
+                            expirationDate:
+                                $ref: '#/components/schemas/Date'
+                            payee:
+                                $ref: '#/components/schemas/Payee'
+        BankCode:
+            type: string
+            example: '208'
+        AccountType:
+            enum:
+                - ESCROW
+                - TRANSACTIONAL
+            type: string
+            example: TRANSACTIONAL
+        Currency:
+            enum:
+                - BRL
+                - CLP
+            type: string
+            example: BRL
+        AccountStatus:
+            enum:
+                - ACTIVE
+                - PARTIAL_BLOCK
+                - TOTAL_BLOCK
+                - INACTIVE
+                - CLOSED
+                - CLOSING
+            type: string
+            example: ACTIVE
+        AccountInformation:
+            type: object
+            properties:
+                taxId:
+                    type: string
+                    example: '37297902000141'
+                bankCode:
+                    $ref: '#/components/schemas/BankCode'
+                type:
+                    $ref: '#/components/schemas/AccountType'
+                currency:
+                    $ref: '#/components/schemas/Currency'
+                branchCode:
+                    type: string
+                    example: '50'
+                number:
+                    type: string
+                    example: 003886850
+                status:
+                    $ref: '#/components/schemas/AccountStatus'
+        BusinessAccount:
+            type: object
+            allOf:
+                -
+                    $ref: '#/components/schemas/AccountInformation'
+            properties:
+                accountId:
+                    $ref: '#/components/schemas/AccountId'
+        Balance:
+            type: object
+            properties:
+                amount:
+                    format: decimal
+                    type: number
+                    example: 6000.5
+                currency:
+                    $ref: '#/components/schemas/Currency'
+        BlockedBalance:
+            type: object
+            allOf:
+                -
+                    $ref: '#/components/schemas/Balance'
+            properties:
+                date:
+                    format: date
+                    type: string
+                    example: '2021-05-02'
+        AccountBalance:
+            type: object
+            properties:
+                accountId:
+                    $ref: '#/components/schemas/AccountId'
+                available:
+                    $ref: '#/components/schemas/Balance'
+                blocked:
+                    $ref: '#/components/schemas/BlockedBalance'
+        TransactionId:
+            format: uuid
+            type: string
+            example: 144b543fa78c495387754b5ccec35da2
+        TransactionType:
+            enum:
+                - TED
+                - DOC
+                - PIX
+                - ...
+            type: string
+            example: PIX
+        CreditDebitIndicator:
+            enum:
+                - CREDIT
+                - DEBIT
+            type: string
+            example: DEBIT
+        Transaction:
+            type: object
+            properties:
+                transactionId:
+                    $ref: '#/components/schemas/TransactionId'
+                dateTime:
+                    format: datetime
+                    type: string
+                    example: '2021-05-31T21:54:18.592Z'
+                creditDebitIndicator:
+                    $ref: '#/components/schemas/CreditDebitIndicator'
+                type:
+                    $ref: '#/components/schemas/TransactionType'
+                description:
+                    type: string
+                    example: PIX CASH OUT EXTERNO enviada para VECHI CONSULTORIA E PROJETOS LTDA
+                relatedParty:
+                    $ref: '#/components/schemas/AccountInformation'
+                amount:
+                    format: decimal
+                    type: number
+                    example: 100
+                currency:
+                    $ref: '#/components/schemas/Currency'
+                tags:
+                    type: object
+                    additionalProperties:
+                        type: string
+                    example:
+                        order: abc123
+                        customer: '123'
+        AccountStatement:
+            type: object
+            properties:
+                accountId:
+                    $ref: '#/components/schemas/AccountId'
+                transactions:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Transaction'
+        AccountStatementFile:
+            format: binary
+            description: An account statement file in one of application/pdf or application/csv format
+            type: string
+        Bank:
+            type: object
+            properties:
+                bankCode:
+                    $ref: '#/components/schemas/BankCode'
+                ispb:
+                    type: string
+                name:
+                    type: string
+                fullName:
+                    type: string
+        Tags:
+            type: object
+            additionalProperties:
+                type: string
+            example:
+                order: abc123
+                customer: '123'
+        BadRequest:
+            type: object
+            properties:
+                error:
+                    type: string
+                errorDescription:
+                    type: string
+        AuthorizedDirectDebits:
+            type: object
+            properties:
+                data:
+                    type: array
+                    items:
+                        type: object
+                        properties:
+                            authorizedDirectDebitId:
+                                type: string
+                                example: 00000000-0000-0000-0000-000000000000
+                            status:
+                                type: string
+                                example: ENABLED
+                            owner:
+                                type: object
+                                properties:
+                                    taxId:
+                                        type: string
+                                        example: '30306294000145'
+                                    name:
+                                        type: string
+                                        example: NOME DA EMPRESA
+                            _links:
+                                type: object
+                                properties:
+                                    listDebits:
+                                        type: object
+                                        properties:
+                                            href:
+                                                type: string
+                                                example: >-
+                                                    /v1/companies/30306294000145/authorized-direct-debits/00000000-0000-0000-0000-000000000000/debits
+                                            method:
+                                                type: string
+                                                example: GET
+        DebitColletion:
+            type: object
+            properties:
+                data:
+                    type: array
+                    items:
+                        type: object
+                        properties:
+                            debitId:
+                                type: string
+                                example: 00000000-0000-0000-0000-000000000001
+                            authorizedDirectDebitId:
+                                type: string
+                                example: 00000000-0000-0000-0000-000000000000
+                            status:
+                                type: string
+                                example: CREATED
+                            amount:
+                                type: number
+                                example: 0.01
+                            dueDate:
+                                format: date
+                                type: string
+                                example: '2023-02-28T00:00:00.000Z'
+                            expirationDate:
+                                format: date
+                                type: string
+                                example: '2024-02-28T00:00:00.000Z'
+                            digitableLine:
+                                type: string
+                                example: '20800000000000000000000000000000000000000000001'
+                            payee:
+                                type: object
+                                properties:
+                                    taxId:
+                                        type: string
+                                        example: '30306294000145'
+                                    fantasyName:
+                                        type: string
+                                        example: NOME FANTASIA
+                                    socialName:
+                                        type: string
+                                        example: NOME SOCIAL
+                                    bank:
+                                        type: object
+                                        properties:
+                                            code:
+                                                type: string
+                                                example: 208
+                                            name:
+                                                type: string
+                                                example: BANCO BTG PACTUAL S.A.
+                _links:
+                    $ref: '#/components/schemas/Pagination'
+        Pagination:
+            type: object
+            properties:
+                next:
+                    type: object
+                    properties:
+                        href:
+                            type: string
+                            example: >-
+                                /v1/companies/30306294000145/authorized-direct-debits/00000000-0000-0000-0000-000000000000/debits?cursor=eyJvZmZzZXQiOiAxMCwgImxpbWl0IjogMTB9
+                        method:
+                            type: string
+                            example: GET
+        CreateTransfer:
+            required:
+                - amount
+                - scheduledDate
+                - type
+                - debitParty
+                - creditParty
+                - reason
+            type: object
+            properties:
+                amount:
+                    type: number
+                    example: 20.02
+                scheduledDate:
+                    format: date
+                    type: string
+                    example: '2021-05-02T00:00:00.000Z'
+                reason:
+                    pattern: '^[a-zA-Z0-9 ]{0,140}$'
+                    type: string
+                    example: mensagem do comprovante
+                type:
+                    enum:
+                        - PIX
+                        - TED
+                        - TEF
+                    type: string
+                debitParty:
+                    type: object
+                    properties:
+                        branchCode:
+                            type: string
+                            example: 50
+                        number:
+                            type: string
+                            example: 0
+                creditParty:
+                    $ref: '#/components/schemas/AccountParty'
+                tags:
+                    $ref: '#/components/schemas/Tags'
+        Transfer:
+            type: object
+            properties:
+                brn:
+                    type: string
+                    example: 'btg:empresas:banking:transfers:6bb6da58-62d8-43c5-92bc-89272272826a'
+                transferId:
+                    type: string
+                    example: 6bb6da58-62d8-43c5-92bc-89272272826a
+                transactionId:
+                    type: string
+                    example: 521826aa-af5b-4220-8ed2-e60b0c250574
+                type:
+                    type: string
+                    example: PIX
+                amount:
+                    type: number
+                    example: 1.39
+                status:
+                    type: string
+                    example: CONFIRMED
+                reason:
+                    type: string
+                    example: Mensagem
+                scheduledDate:
+                    format: date
+                    type: string
+                    example: '2022-10-10T00:00:00.000Z'
+                debitParty:
+                    $ref: '#/components/schemas/AccountDataWithPersonType'
+                creditParty:
+                    $ref: '#/components/schemas/AccountDataWithPersonType'
+                tags:
+                    $ref: '#/components/schemas/TagsTransac'
+                _links:
+                    $ref: '#/components/schemas/PaginationTransac'
+        TransferCollection:
+            type: object
+            properties:
+                data:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Transfer'
+        TransferApprovalsCollection:
+            type: object
+            properties:
+                data:
+                    type: array
+                    items:
+                        type: object
+                        properties:
+                            approvalId:
+                                type: string
+                                example: 6bb6da58-62d8-43c5-92bc-89272272826a
+                            transferId:
+                                type: string
+                                example: 7cb6da58-62d8-43c3-99bc-89272272811b
+                            type:
+                                type: string
+                                example: PIX
+                            amount:
+                                type: number
+                                example: 1.39
+                            status:
+                                type: string
+                                example: CONFIRMED
+                            scheduledDate:
+                                format: date
+                                type: string
+                                example: '2022-10-10T00:00:00.000Z'
+                            debitParty:
+                                $ref: '#/components/schemas/AccountDataWithoutAccountType'
+                            creditParty:
+                                $ref: '#/components/schemas/AccountDataWithoutAccountType'
+                            tags:
+                                $ref: '#/components/schemas/TagsTransac'
+                            _links:
+                                $ref: '#/components/schemas/PaginationTransac'
+        AccountParty:
+            oneOf:
+                -
+                    $ref: '#/components/schemas/AccountData'
+            type: object
+        AccountData:
+            required:
+                - bankCode
+                - branchCode
+                - number
+                - accountType
+                - taxId
+                - name
+                - personType
+            type: object
+            properties:
+                bankCode:
+                    type: string
+                    example: 208
+                branchCode:
+                    type: string
+                    example: 50
+                number:
+                    type: string
+                    example: '000000001'
+                personType:
+                    enum:
+                        - J
+                        - F
+                    type: string
+                accountType:
+                    $ref: '#/components/schemas/AccountTypeTransac'
+                taxId:
+                    type: string
+                    example: 30306294000145
+                name:
+                    type: string
+                    example: BTG PACTUAL
+        AccountDataWithPersonType:
+            type: object
+            properties:
+                bankCode:
+                    type: string
+                    example: 208
+                branchCode:
+                    type: string
+                    example: 50
+                number:
+                    type: string
+                    example: '000000001'
+                accountType:
+                    $ref: '#/components/schemas/AccountTypeTransac'
+                taxId:
+                    type: string
+                    example: 30306294000145
+                name:
+                    type: string
+                    example: BTG PACTUAL
+                personType:
+                    $ref: '#/components/schemas/PersonType'
+        AccountDataWithoutAccountType:
+            type: object
+            properties:
+                bankCode:
+                    type: string
+                    example: 208
+                branchCode:
+                    type: string
+                    example: 50
+                number:
+                    type: string
+                    example: '000000001'
+                taxId:
+                    type: string
+                    example: 30306294000145
+                name:
+                    type: string
+                    example: BTG PACTUAL
+        PixData:
+            description: Detalhes da transação referente ao campo type.
+            required:
+                - key
+            type: object
+            properties:
+                key:
+                    $ref: '#/components/schemas/keyObj'
+                    description: ''
+        KeyType:
+            description: Tipo da chave PIX
+            enum:
+                - CPF
+                - CNPJ
+                - PHONE
+                - EMAIL
+                - EVP
+            type: string
+            example: CPF
+        AccountTypeTransac:
+            enum:
+                - CC
+                - PG
+            type: string
+        PersonType:
+            description: Pessoa Jurídica ou pessoa física
+            enum:
+                - J
+                - F
+            type: string
+        TagsTransac:
+            type: object
+            properties:
+                externalId:
+                    description: Identificador da transação que pode ser usado nas consultas
+                    type: string
+                    example: rrt-2396386635293333864
+        PaginationTransac:
+            type: object
+            properties:
+                next:
+                    type: object
+                    properties:
+                        href:
+                            type: string
+                            example: >-
+                                /v1/companies/30306294000145/transfers?cursor=eyJvZmZzZXQiOiAxMCwgImxpbWl0IjogMTB9
+                        method:
+                            type: string
+                            example: GET
+        CreateBankSlip:
+            required:
+                - amount
+                - referenceNumber
+                - payer
+                - dueDate
+                - installments
+            type: object
+            properties:
+                amount:
+                    format: decimal
+                    description: Valor da cobrança.
+                    type: number
+                    example: 1500
+                dueDate:
+                    format: date
+                    description: Data de vencimento do boleto.
+                    type: string
+                    example: '2021-04-02'
+                overDueDate:
+                    format: date
+                    description: Data limite para pagamento do boleto.
+                    type: string
+                    example: '2029-12-31'
+                referenceNumber:
+                    description: Número de referencia utilizado pelo parceiro.
+                    type: string
+                    example: '304930'
+                description:
+                    description: Descrição da cobrança. Aparece no boleto emitido.
+                    type: string
+                    example: descrição
+                payer:
+                    $ref: '#/components/schemas/PayerBoleto'
+                installments:
+                    description: Número de parcelas. Para cada parcela um novo boleto é gerado.
+                    default: 1
+                    type: integer
+                interests:
+                    description: Juros e multas.
+                    type: object
+                    properties:
+                        arrears:
+                            $ref: '#/components/schemas/InterestRate'
+                        penalty:
+                            $ref: '#/components/schemas/InterestRate'
+                discounts:
+                    description: Condições de desconto aplicadas. Deve ser aplicada no máximo uma.
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Discount'
+                deliveryMediums:
+                    description: Configuração de entrega.
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/DeliveryMedium'
+                pixInfo:
+                    description: Insere no boleto QR code para pagamento via Pix
+                    type: object
+                    properties:
+                        generateEmbeddedQrCode:
+                            type: boolean
+        PDFresponse:
+            description: ''
+            type: object
+            properties:
+                pdf:
+                    description: ''
+                    type: string
+                    example: JVBERi0xLjQKJdPr6eEKMSAwIG9...
+        PaymentBody-complete:
+            oneOf:
+                -
+                    $ref: '#/components/schemas/Pagamento-PIX-QR-CODE-emv'
+                -
+                    $ref: '#/components/schemas/Pagamento-PIX-QR-CODE-location'    
+                -
+                    $ref: '#/components/schemas/Pagamento-Boletos_Utilities_FGTS'
+                -
+                    $ref: '#/components/schemas/Pagamento-TED_PIX-MANUAL'
+                -
+                    $ref: '#/components/schemas/Pagamento-PIX-KEY'
+                -
+                    $ref: '#/components/schemas/Pagamento-DARF'
+                -
+                    $ref: '#/components/schemas/Pagamento-PIX-REVERSAL'
+            properties:
+                tags:
+                    description: Objeto de uso do cliente para identificar a transação.
+        detail-inside-emv:
+            description: Detalhes da transação referente ao campo type.
+            type: object
+            properties:
+                emv:
+                    description: Chave copia e cola de pix
+                    type: string
+                    example: 123498128974239789gov-exemplo-de-emv1234123461
+        detail-inside-digitableLine:
+            description: Detalhes da transação referente ao campo type.
+            required:
+                - digitableLine
+            type: object
+            properties:
+                digitableLine:
+                    description: Linha digitavel do documento a ser pago
+                    type: string
+                    example: '123498162364512309413275312'
+        detail-inside-location:
+            description: Detalhes da transação referente ao campo type
+            type: object
+            properties:
+                location:
+                    description: Identificador do QR Code
+                    type: string
+                    example: qrcode.pix.com/qrs1/v2/weqriojwio5UkwwejrJoABe9iwoejiowejrDcWsDlxwzkAuuvbsUPeRAg
+        Pagamento-Boletos_Utilities_FGTS:
+            description: 'Pagamento de boleto, utilities e FGTS(utilizar utilities)'
+            type: object
+            allOf:
+                -
+                    required:
+                        - type
+                        - detail
+                    type: object
+                    properties:
+                        type:
+                            description: Tipo do pagamento
+                            enum:
+                                - BANKSLIP
+                                - UTILITIES
+                            type: string
+                        detail:
+                            $ref: '#/components/schemas/detail-inside-digitableLine'
+                            description: Detalhes da transação referente ao campo type.
+                -
+                    $ref: '#/components/schemas/BankSlipPaymentIssue'
+        Pagamento-PIX_MANUAL:
+            description: PIX MANUAL
+            type: object
+            allOf:
+                -
+                    required:
+                        - type
+                        - detail
+                    type: object
+                    properties:
+                        type:
+                            description: Tipo do pagamento
+                            enum:
+                                - PIX_MANUAL
+                            type: string
+                        detail:
+                            $ref: '#/components/schemas/PixData'
+                            description: Detalhes da transação referente ao campo type.
+                -
+                    $ref: '#/components/schemas/BankSlipPaymentIssue'
+        accountObj:
+            description: ''
+            required:
+                - type
+                - number
+                - branch
+                - bankCode
+            type: object
+            properties:
+                type:
+                    description: Tipo da conta
+                    enum:
+                        - CC
+                        - PG
+                    type: string
+                number:
+                    description: Número da conta
+                    type: string
+                    example: '001234567'
+                branch:
+                    description: Agência
+                    type: string
+                    example: '1'
+                bankCode:
+                    description: Código do banco
+                    type: string
+                    example: '208'
+        creditPartyObj:
+            description: ''
+            required:
+                - taxId
+                - name
+                - account
+            type: object
+            properties:
+                taxId:
+                    description: Documento da parte creditada
+                    type: string
+                    example: '12345671234'
+                name:
+                    description: Nome da parte creditada
+                    type: string
+                    example: NOME
+                account:
+                    $ref: '#/components/schemas/accountObj'
+                    description: Dados da conta
+        creditParty:
+            description: Detalhes da transação referente ao campo type.
+            required:
+                - creditParty
+            type: object
+            properties:
+                creditParty:
+                    $ref: '#/components/schemas/creditPartyObj'
+                    description: Detalhes da parte creditada.
+        Pagamento-TED_PIX-MANUAL:
+            description: PIX manual e TED
+            type: object
+            allOf:
+                -
+                    required:
+                        - type
+                        - detail
+                    type: object
+                    properties:
+                        type:
+                            description: Tipo do pagamento
+                            enum:
+                                - TED
+                                - PIX_MANUAL
+                            type: string
+                        detail:
+                            $ref: '#/components/schemas/creditParty'
+                            description: Detalhes da transação referente ao campo type.
+                -
+                    $ref: '#/components/schemas/BankSlipPaymentIssue'
+        keyObj:
+            description: ''
+            required:
+                - value
+            type: object
+            properties:
+                value:
+                    description: Chave Pix
+                    type: string
+                    example: '1132324545'
+        Pagamento-PIX-KEY:
+            description: Pix por chave pix
+            type: object
+            allOf:
+                -
+                    required:
+                        - type
+                        - detail
+                    type: object
+                    properties:
+                        type:
+                            description: Tipo do pagamento
+                            enum:
+                                - PIX_KEY
+                            type: string
+                        detail:
+                            $ref: '#/components/schemas/PixData'
+                            description: Detalhes da transação referente ao campo type.
+                -
+                    $ref: '#/components/schemas/BankSlipPaymentIssue'
+        taxPayerObj:
+            description: ''
+            required:
+                - id
+                - name
+            type: object
+            properties:
+                id:
+                    description: Número do documento do pagador
+                    type: string
+                    example: '12345678123'
+                name:
+                    description: Nome do pagador
+                    type: string
+                    example: NOME
+        Pagamento-DARF:
+            description: DARF
+            type: object
+            allOf:
+                -
+                    required:
+                        - type
+                        - detail
+                    type: object
+                    properties:
+                        type:
+                            description: Tipo do pagamento
+                            enum:
+                                - DARF
+                            type: string
+                        detail:
+                            $ref: '#/components/schemas/DARFdetail'
+                            description: Detalhes da transação referente ao campo type.
+                -
+                    $ref: '#/components/schemas/BankSlipPaymentIssue'
+        DARFdetail:
+            description: Detalhes da transação referente ao campo type.
+            required:
+                - taxPayer
+                - feeAmount
+                - expireDate
+                - principalAmount
+                - fineAmount
+                - baselinePeriodDate
+                - treasuryRevenueCode
+                - referenceNumber
+            type: object
+            properties:
+                taxPayer:
+                    $ref: '#/components/schemas/taxPayerObj'
+                    description: Informações do pagador
+                feeAmount:
+                    description: Custo de operação
+                    type: number
+                    example: '0.1'
+                expireDate:
+                    format: date
+                    description: Data de expiração
+                    type: string
+                    example: '2024-10-19'
+                principalAmount:
+                    description: valor do principal
+                    type: number
+                    example: '10.26'
+                fineAmount:
+                    description: Valor da multa
+                    type: number
+                    example: '0.1'
+                baselinePeriodDate:
+                    format: date
+                    description: Período de apuração
+                    type: string
+                    example: '2024-08-02'
+                treasuryRevenueCode:
+                    description: Código da Receita
+                    type: string
+                    example: '0211'
+                referenceNumber:
+                    description: Número de referência
+                    type: string
+                    example: 029238372
+        PayablesPaymenCollection:
+            type: object
+            properties:
+                data:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/PayablesPayment'
+        PayablesPayment:
+            type: object
+            properties:
+                type:
+                    type: string
+                    example: UTILITIES
+                amount:
+                    type: number
+                    example: '11.11'
+                barcode:
+                    description: ''
+                    type: string
+                    example: '111111111111111122200000000213124211'
+                digitableLine:
+                    description: ''
+                    type: string
+                    example: '111111111111111112222222222333332222222222223333'
+                assignor:
+                    description: ''
+                    type: string
+                    example: EXEMPLO-DE-ASSIGNOR
+                openTime:
+                    description: ''
+                    type: string
+                    example: '07:00:00'
+                closeTime:
+                    description: ''
+                    example: '22:22:22'
+        Pagamento-PIX-QR-CODE-emv:
+            description: Pagamento pix copia e cola
+            type: object
+            allOf:
+                -
+                    required:
+                        - type
+                        - detail
+                    type: object
+                    properties:
+                        type:
+                            description: Tipo do pagamento
+                            enum:
+                                - PIX_QR_CODE
+                            type: string
+                        detail:
+                            $ref: '#/components/schemas/detail-inside-emv'
+                            description: Detalhes da transação referente ao campo type.
+                -
+                    $ref: '#/components/schemas/BankSlipPaymentIssue'
+        Pagamento-PIX-QR-CODE-location:
+            description: Pagamento pix copia e cola
+            type: object
+            allOf:
+                -
+                    required:
+                        - type
+                        - detail
+                    type: object
+                    properties:
+                        type:
+                            description: Tipo do pagamento
+                            enum:
+                                - PIX_QR_CODE
+                            type: string
+                        detail:
+                            $ref: '#/components/schemas/detail-inside-location'
+                            description: Detalhes da transação referente ao campo type.
+                -
+                    $ref: '#/components/schemas/BankSlipPaymentIssue'            
+        Pagamento-PIX-REVERSAL:
+            description: Pagamento pix copia e cola
+            type: object
+            allOf:
+                -
+                    required:
+                        - type
+                        - detail
+                    type: object
+                    properties:
+                        type:
+                            description: Tipo do pagamento
+                            enum:
+                                - PIX_REVERSAL
+                            type: string
+                        detail:
+                            $ref: '#/components/schemas/detail-inside-E2EID'
+                            description: Detalhes da transação referente ao campo type.
+                -
+                    $ref: '#/components/schemas/BankSlipPaymentIssue'
+        detail-inside-E2EID:
+            description: Detalhes da transação referente ao campo type.
+            type: object
+            properties:
+                originalEndToEndId:
+                    description: Chave copia e cola de pix
+                    type: string
+                    example: E0312354657879547635464abcde12341
+        BankSlipPaymentIssue:
+            required:
+                - amount
+                - debitParty
+                - paymentDate
+            type: object
+            properties:
+                amount:
+                    $ref: '#/components/schemas/Money'
+                    description: Valor da transação.
+                debitParty:
+                    description: Dados da parte debitada.
+                    type: object
+                    properties:
+                            branchCode:
+                                description: Agência. Utilizar 50.
+                                type: string
+                                example: '50'
+                            number:
+                                description: Número da conta
+                                type: string
+                                example: '000000050'
+                tags:
+                    type: object
+                    properties:
+                        externalId:
+                            $ref: '#/components/schemas/ExternalId'
+                paymentDate:
+                    format: date
+                    description: Data de pagamento
+                    type: string
+                    example: '2025-02-02'
+    securitySchemes:
+        oauth2:
+            flows:
+                authorizationCode:
+                    authorizationUrl: 'https://id.sandbox.btgpactual.com/oauth2/authorize'
+                    tokenUrl: 'https://id.sandbox.btgpactual.com/oauth2/token'
+                    scopes:
+                        openid: Consultar seu perfil BTG Id
+                        empresas.btgpactual.com/pix-cash-in: Consultar Pix Cobrança. Emitir Pix Cobrança.
+                        empresas.btgpactual.com/pix-cash-in.readonly: Consultar Pix Cobrança.
+            type: oauth2
+security:
+    -
+        oauth2:
+            - openid
+            - empresas.btgpactual.com/pix-cash-in.readonly
+            - empresas.btgpactual.com/authorized-direct-debits.readonly
+            - empresas.btgpactual.com/bank-slips
+            - empresas.btgpactual.com/bank-slips.readonly
+            - openid empresas.btgpactual.com/payments.readonly
+            - openid empresas.btgpactual.com/payments
+            - empresas.btgpactual.com/accounts.readonly
+tags:
+    -
+        name: Pix Cobrança
+    -
+        name: Saldo e Extrato
+    -
+        name: Transferências
+    -
+        name: Débito Direto e Autorizado
+    -
+        name: Boletos
+    -
+        name: Pagamentos
+externalDocs:
+    description: Documentação e Guias
+    url: 'https://developers.empresas.btgpactual.com/docs/'
