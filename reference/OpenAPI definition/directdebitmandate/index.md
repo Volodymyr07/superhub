@@ -1,0 +1,4 @@
+---
+title: DirectDebitMandate
+hidden: false
+---

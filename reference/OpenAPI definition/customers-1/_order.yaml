@@ -1,0 +1,5 @@
+- getcustomers
+- putcustomer
+- postcustomer
+- getcustomerbyid
+- deletecustomer
