@@ -1,0 +1,514 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Ironclad OAuth 2.0 API",
+    "description": "Documentation for Ironclad's OAuth 2.0 Implementation. More details on the [OAuth 2.0 specification](https://datatracker.ietf.org/doc/html/rfc6749).",
+    "version": "1",
+    "contact": {
+      "name": "Ironclad Support",
+      "email": "support@ironcladapp.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://ironcladapp.com/oauth",
+      "description": "Production server"
+    },
+    {
+      "url": "https://eu1.ironcladapp.com/oauth",
+      "description": "EU Production server"
+    },
+    {
+      "url": "https://demo.ironcladapp.com/oauth",
+      "description": "Demo server"
+    }
+  ],
+  "paths": {
+    "/authorize": {
+      "get": {
+        "summary": "Initiate an Authorization Transaction",
+        "description": "This endpoint is used to request authorization from a user to access their Ironclad data on their behalf. This is the initial request of an Authorization Code grant flow. The client application generally initiates the authorization flow, where a user will be redirected to Ironclad to log in and grant the requested permissions. The user is then redirected back to the client application redirect URI with an authorization code. See endpoint [specification](https://datatracker.ietf.org/doc/html/rfc6749#section-3.1).",
+        "operationId": "oauth-authorize",
+        "tags": ["Authorization"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AuthCodeResponseType"
+          },
+          {
+            "$ref": "#/components/parameters/ClientId"
+          },
+          {
+            "$ref": "#/components/parameters/RedirectUri"
+          },
+          {
+            "$ref": "#/components/parameters/ResourceScope"
+          },
+          {
+            "$ref": "#/components/parameters/State"
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "If the request is successful, the user will be directed to Ironclad to log in and grant permissions. Then the user will be redirected back to the client application redirect URI with an authorization code. If the user denies the request, they will be redirected back to the client application redirect URI with an error of 'access_denied'. If the request includes an invalid scope, the user will be redirected back to the client application redirect URI with an error of 'invalid_scope'.",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string",
+                  "example": "https://myapp.com/oauth/callback?code=63d415e0dd0d828c3a878548&state=1234567890"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "If the request is missing required parameters or has invalid parameters, the client will receive an 'invalid_request' response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "invalid_request"
+                    },
+                    "error_description": {
+                      "type": "string",
+                      "example": "Invalid or missing parameters: Invalid value for client_id, expected type UUID"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "If the client application is not authorized to use a specific grant type, the client will receive an 'unauthorized_client' response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "unauthorized_client"
+                    },
+                    "error_description": {
+                      "type": "string",
+                      "example": "client not authorized to use this oauth grant type"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/userinfo": {
+      "get": {
+        "summary": "Retrieve Token User Info",
+        "description": "After a client application has obtained an access token, it can make a request to the /userinfo endpoint to get user-related information. The data returned include the user's ID, email, username, and other profile details along with the scopes granted to the token.",
+        "operationId": "oauth-userinfo",
+        "tags": ["Resources"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XAsUserEmail"
+          },
+          {
+            "$ref": "#/components/parameters/XAsUserId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "63d415e0dd0d828c3a878548"
+                    },
+                    "email": {
+                      "type": "string",
+                      "example": "user@example.com"
+                    },
+                    "username": {
+                      "type": "string",
+                      "example": "username"
+                    },
+                    "firstName": {
+                      "type": "string",
+                      "example": "John"
+                    },
+                    "lastName": {
+                      "type": "string",
+                      "example": "Doe"
+                    },
+                    "displayName": {
+                      "type": "string",
+                      "example": "John Doe"
+                    },
+                    "title": {
+                      "type": "string",
+                      "example": "Software Engineer"
+                    },
+                    "companyId": {
+                      "type": "string",
+                      "example": "6013609108b8f070cee94fc1"
+                    },
+                    "companyName": {
+                      "type": "string",
+                      "example": "Example Company"
+                    },
+                    "scopes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "public.records.readRecords",
+                        "public.records.createRecords"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "email",
+                    "username",
+                    "firstName",
+                    "lastName",
+                    "displayName",
+                    "title",
+                    "companyId",
+                    "companyName",
+                    "scopes"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "401",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/InvalidTokenError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/RevokedTokenError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ExpiredTokenError"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "example": "NOT_FOUND"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "AuthCodeResponseType": {
+        "name": "response_type",
+        "in": "query",
+        "description": "The expected response type for the request. Must be set to 'code' for the Authorization Code grant.",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": ["code"],
+          "example": "code"
+        }
+      },
+      "ClientId": {
+        "name": "client_id",
+        "in": "query",
+        "description": "The client ID of the client application issued at registration.",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "6013609108b8f070cee94fc1"
+        }
+      },
+      "RedirectUri": {
+        "name": "redirect_uri",
+        "in": "query",
+        "description": "The client applications redirect URI. Must be registered on the client application and consistent throughout the authorization transaction.",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "https://myapp.com/oauth/callback"
+        }
+      },
+      "ResourceScope": {
+        "name": "scope",
+        "in": "query",
+        "description": "Specifies the level of access that your client application is requesting. It should be a space-separated string of Ironclad resource scopes that can be found on the client application registration page. The scopes requested must be equal to or a subset of the client application’s registered scopes.",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "example": "public.records.readRecords public.records.createRecords"
+        }
+      },
+      "State": {
+        "name": "state",
+        "in": "query",
+        "description": "An opaque value used by the client application to maintain state between the request and callback. The authorization server includes this value when redirecting the user back to the client application.",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "example": "1234567890"
+        }
+      },
+      "XAsUserEmail": {
+        "name": "x-as-user-email",
+        "in": "header",
+        "description": "Denotes the actor of the request. When used, the API will take into account this user's permissions and access. This or `x-as-user-id` is required when the associated token was produced from the Client Credentials grant or with legacy bearer tokens on select endpoints. More information about [permissions](https://support.ironcladapp.com/s/article/Understanding-and-Managing-Permissions).",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "example": "jane.doe@test.com"
+        }
+      },
+      "XAsUserId": {
+        "name": "x-as-user-id",
+        "in": "header",
+        "description": "Denotes the actor of the request. When used, the API will take into account this user's permissions and access. This or `x-as-user-email` is required when the associated token was produced from the Client Credentials grant or with legacy bearer tokens on select endpoints. More information about [permissions](https://support.ironcladapp.com/s/article/Understanding-and-Managing-Permissions).",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "example": "5f0375c4cdc1927a3c5edcd3"
+        }
+      },
+      "ClientAuthorization": {
+        "name": "Authorization",
+        "in": "header",
+        "description": "The client ID and client secret of the client application in the format 'Basic <client_id:client_secret>' where client ID and secret are base64 encoded. Required if not provided in the request body.",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "example": "Basic Y2xpZW50X2lkOmNsaWVudF9zZWNyZXQ="
+        }
+      }
+    },
+    "requestBodies": {
+      "TokenRequestBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "grant_type": {
+                      "description": "The grant type for the request. Must be set to 'authorization_code' for the Authorization Code grant initial token request.",
+                      "type": "string",
+                      "enum": ["authorization_code"],
+                      "example": "authorization_code"
+                    },
+                    "code": {
+                      "description": "The authorization code received from the authorization server.",
+                      "type": "string",
+                      "example": "63d415e0dd0d828c3a878548"
+                    },
+                    "redirect_uri": {
+                      "description": "The client applications redirect URI. Must be registered on the client application and consistent throughout the authorization transaction.",
+                      "type": "string",
+                      "example": "https://myapp.com/oauth/callback"
+                    },
+                    "client_id": {
+                      "description": "The client ID of the client application issued at registration. Required if not provided in the Authorization header.",
+                      "type": "string",
+                      "example": "6013609108b8f070cee94fc1"
+                    },
+                    "client_secret": {
+                      "description": "The client secret of the client application issued at registration. Required if not provided in the Authorization header.",
+                      "type": "string",
+                      "example": "346423435cdsfad786578adf"
+                    }
+                  },
+                  "required": ["grant_type", "code", "redirect_uri"]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "grant_type": {
+                      "description": "The grant type for the request. Must be set to 'refresh_token' for the Authorization Code grant refresh token request.",
+                      "type": "string",
+                      "enum": ["refresh_token"],
+                      "example": "refresh_token"
+                    },
+                    "refresh_token": {
+                      "description": "The refresh token received from the authorization server for the access token being refreshed.",
+                      "type": "string",
+                      "example": "63d415e0dd0d828c3a878548"
+                    },
+                    "scope": {
+                      "description": "Specifies the level of access that your client application is requesting. It should be a space-separated string of Ironclad resource scopes that can be found on the client application registration page. The scopes requested must be equal to or a subset of the client application’s registered scopes and the previously granted scopes. When ommitted, the previously granted scopes are used.",
+                      "type": "string",
+                      "example": "public.workflows.readWorkflows public.workflows.createWorkflows"
+                    },
+                    "client_id": {
+                      "description": "The client ID of the client application issued at registration. Required if not provided in the Authorization header.",
+                      "type": "string",
+                      "example": "6013609108b8f070cee94fc1"
+                    },
+                    "client_secret": {
+                      "description": "The client secret of the client application issued at registration. Required if not provided in the Authorization header.",
+                      "type": "string",
+                      "example": "346423435cdsfad786578adf"
+                    }
+                  },
+                  "required": ["grant_type", "refresh_token"]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "grant_type": {
+                      "description": "The grant type for the request. Must be set to 'client_credentials' for the Client Credentials grant token request.",
+                      "type": "string",
+                      "enum": ["client_credentials"],
+                      "example": "client_credentials"
+                    },
+                    "scope": {
+                      "description": "Specifies the level of access that your client application is requesting. It should be a space-separated string of Ironclad resource scopes that can be found on the client application registration page. The scopes requested must be equal to or a subset of the client application’s registered scopes.",
+                      "type": "string",
+                      "example": "public.workflows.readWorkflows public.workflows.createWorkflows"
+                    },
+                    "client_id": {
+                      "description": "The client ID of the client application issued at registration. Required if not provided in the Authorization header.",
+                      "type": "string",
+                      "example": "6013609108b8f070cee94fc1"
+                    },
+                    "client_secret": {
+                      "description": "The client secret of the client application issued at registration. Required if not provided in the Authorization header.",
+                      "type": "string",
+                      "example": "346423435cdsfad786578adf"
+                    }
+                  },
+                  "required": ["grant_type"]
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "InvalidTokenError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "UNAUTHORIZED"
+          },
+          "message": {
+            "type": "string",
+            "example": "invalid authentication token"
+          }
+        }
+      },
+      "RevokedTokenError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "UNAUTHORIZED"
+          },
+          "message": {
+            "type": "string",
+            "example": "token has been revoked"
+          }
+        }
+      },
+      "ExpiredTokenError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "UNAUTHORIZED"
+          },
+          "message": {
+            "type": "string",
+            "example": "token has expired"
+          }
+        }
+      },
+      "AuthorizationCodeGrantTokenResponse": {
+        "description": "Response for an Authorization Code grant token request. Will include the token scope if scope was requested.",
+        "type": "object",
+        "properties": {
+          "token_type": {
+            "type": "string",
+            "example": "Bearer"
+          },
+          "access_token": {
+            "type": "string",
+            "example": "63d415e0dd0d828c3a878548"
+          },
+          "refresh_token": {
+            "type": "string",
+            "example": "42353hj5hj453lhgff245323"
+          },
+          "expires_in": {
+            "type": "integer",
+            "example": 3600
+          },
+          "scope": {
+            "type": "string",
+            "example": "public.workflows.readWorkflows public.workflows.createWorkflows"
+          }
+        },
+        "required": [
+          "token_type",
+          "access_token",
+          "refresh_token",
+          "expires_in"
+        ]
+      },
+      "ClientCredentialsGrantTokenResponse": {
+        "description": "Response for an Client Credentials grant token request. Will include the token scope if scope was requested.",
+        "type": "object",
+        "properties": {
+          "token_type": {
+            "type": "string",
+            "example": "Bearer"
+          },
+          "access_token": {
+            "type": "string",
+            "example": "63d415e0dd0d828c3a878548"
+          },
+          "expires_in": {
+            "type": "integer",
+            "example": 3600
+          },
+          "scope": {
+            "type": "string",
+            "example": "public.workflows.readWorkflows public.workflows.createWorkflows"
+          }
+        },
+        "required": ["token_type", "access_token", "expires_in"]
+      }
+    }
+  }
+}
