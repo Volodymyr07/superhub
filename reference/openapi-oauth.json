@@ -102,6 +102,101 @@
         }
       }
     },
+    "/token": {
+      "post": {
+        "summary": "Request a Token",
+        "description": "This endpoint is used to request a token from the authorization server. If requesting an initial token in the Authorization Code grant, an authorization code, client ID, and client secret must be provided. If requesting to refresh an existing token in the Authorization Code grant, a refresh token, client ID, and client secret must be provided. If requesting a token via the Client Credentials grant, a client ID and secret must be provided. See endpoint [specification](https://datatracker.ietf.org/doc/html/rfc6749#section-3.2).",
+        "operationId": "oauth-token",
+        "tags": ["Authorization"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ClientAuthorization"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/TokenRequestBody"
+        },
+        "responses": {
+          "200": {
+            "description": "A successful response will return the relevant token details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/AuthorizationCodeGrantTokenResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ClientCredentialsGrantTokenResponse"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "If the request is missing required parameters or has invalid parameters, the client will receive either an 'invalid_request' or 'invalid_scope' response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "invalid_request"
+                    },
+                    "error_description": {
+                      "type": "string",
+                      "example": "missing redirect uri"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "If the client associated with the initial authorization request does not match the client requesting the token or if the client associated with a token does not match the client requesting a token refresh, the client will receive an 'invalid_client' response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "invalid_client"
+                    },
+                    "error_description": {
+                      "type": "string",
+                      "example": "invalid client"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "If the client is not authorized to use a particular grant, the client will receive an 'unauthorized_client' response. If the request includes an invalid authorization code, an invalid refresh token, or an invalid redirect URI, the client will receive an 'invalid_grant' response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "invalid_grant"
+                    },
+                    "error_description": {
+                      "type": "string",
+                      "example": "authorization code has expired"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/userinfo": {
       "get": {
         "summary": "Retrieve Token User Info",
