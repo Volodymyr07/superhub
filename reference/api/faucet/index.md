@@ -1,4 +1,0 @@
----
-title: Faucet
-hidden: false
----

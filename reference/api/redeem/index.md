@@ -1,4 +1,0 @@
----
-title: Redeem
-hidden: false
----
