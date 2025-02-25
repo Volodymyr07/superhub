@@ -1,4 +1,4 @@
 ---
 title: Authorization
-hidden: false
+hidden: true
 ---
