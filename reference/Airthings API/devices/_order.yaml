@@ -1,0 +1,14 @@
+- get_v1-devices
+- patch_v1-devices
+- get_v1-devices-serialnumber
+- get_v1-devices-serialnumber-battery
+- get_v1-devices-serialnumber-latest-battery
+- get_v1-devices-serialnumber-latest-samples
+- get_v1-devices-serialnumber-samples
+- get_v1-devices-serialnumber-hourly-radon-samples
+- get_v1-devices-serialnumber-mold-samples
+- get_v1-devices-serialnumber-virus-risk-samples
+- get_v1-devices-serialnumber-occupancy-samples
+- get_v1-devices-serialnumber-ventilation-samples
+- get_v1-devices-serialnumber-threshold-breaches
+- patch_v1-devices-labels

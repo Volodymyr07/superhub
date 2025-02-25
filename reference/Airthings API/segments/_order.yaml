@@ -1,0 +1,8 @@
+- get_v1-segments
+- get_v1-segments-segmentid
+- get_v1-segments-segmentid-samples
+- get_v1-segments-segmentid-mold-samples
+- get_v1-segments-segmentid-virus-risk-samples
+- get_v1-segments-segmentid-occupancy-samples
+- get_v1-segments-segmentid-ventilation-samples
+- get_v1-segments-segmentid-hourly-radon-samples

@@ -1,0 +1,4 @@
+- get_v1-webhooks
+- post_v1-webhooks
+- delete_v1-webhooks-hookid
+- patch_v1-webhooks-hookid

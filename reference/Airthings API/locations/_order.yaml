@@ -1,0 +1,5 @@
+- get_v1-locations
+- post_v1-locations
+- get_v1-locations-locationid
+- get_v1-locations-locationid-latest-samples
+- post_v1-locations-locationid-devices
