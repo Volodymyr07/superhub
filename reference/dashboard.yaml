@@ -1,0 +1,38 @@
+openapi: 3.0.3
+info:
+  title: Enum Default Issue
+  version: 1.0.0
+paths:
+  /test:
+    get:
+      summary: Test default with enum reference
+      parameters:
+        - name: directDefault
+          in: query
+          schema:
+            type: string
+            default: dummy_api_key
+        - name: refEnumDefault
+          in: query
+          schema:
+            $ref: "#/components/schemas/ResultCalendarRange"
+            default: Next7days
+      responses:
+        "200":
+          description: Successful response
+components:
+  schemas:
+    ResultCalendarRange:
+      type: string
+      enum:
+        - Today
+        - Tomorrow
+        - Next7days
+        - Next15days
+        - Next30days
+        - All
+        - yesterday
+        - Previous7days
+        - Previous15days
+        - Previous30days
+        - Previous90days
