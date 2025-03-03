@@ -13,15 +13,19 @@ paths:
             schema:
               type: object
               properties:
-                nested2:
-                  enum:
+                statuses:
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                      - PENDING
+                      - APPROVED
+                      - REJECTED
+                      - CANCELLED
+                  example:
                     - PENDING
                     - APPROVED
                     - REJECTED
-                    - CANCELLED
-                  type: string
-                  default: PENDING
-                  example: PENDING
       responses:
         '200':
           description: Successful response
