@@ -1,0 +1,164 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "version": "1.5.6",
+    "title": "Upbit API",
+    "termsOfService": "https://example.com/terms/",
+    "contact": {
+      "name": "Contact our support",
+      "email": "contact@example.com",
+      "url": "http://example.com/contact"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "description": "업비트 API 문서 테스트\n"
+  },
+  "servers": [
+    {
+      "url": "https://api.upbit.com/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "JWT 토큰 생성 관련 API"
+    },
+    {
+      "name": "Accounts",
+      "description": "Example Accounts"
+    }
+  ],
+  "paths": {
+    "/auth/token": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "JWT 토큰 생성",
+        "description": "클라이언트 측에서 JWT 토큰을 생성해야 합니다. \n이 API는 설명용이며, 실제로 실행되지 않습니다. \n\nJWT 생성 방법은 [업비트 문서](https://docs.upbit.com/docs/create-authorization-request)를 참고하세요.\n",
+        "operationId": "generateJwtToken",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JwtTokenRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "JWT 토큰 생성 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JwtTokenResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "요청이 잘못됨"
+          }
+        }
+      }
+    },
+    "/accounts": {
+      "get": {
+        "tags": ["자산"],
+        "summary": "자산 조회",
+        "description": "사용자가 보유한 자산 리스트를 조회합니다.",
+        "operationId": "accounts",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved user assets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Accounts"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "**JWT 인증이 필요합니다.**\n\n- JWT 토큰을 생성하려면 `/auth/token` API를 참고하세요.\n- JWT 토큰은 `Authorization` 헤더에 포함되어야 합니다:\n  ```\n  Authorization: Bearer \u003CJWT_TOKEN\u003E\n  ```\n"
+      }
+    },
+    "schemas": {
+      "JwtTokenRequest": {
+        "type": "object",
+        "properties": {
+          "access_key": {
+            "type": "string",
+            "description": "API 액세스 키"
+          },
+          "secret_key": {
+            "type": "string",
+            "description": "API 시크릿 키"
+          },
+          "nonce": {
+            "type": "string",
+            "description": "UUID 형식의 난수 (예: `550e8400-e29b-41d4-a716-446655440000`)"
+          }
+        }
+      },
+      "JwtTokenResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "생성된 JWT 토큰"
+          }
+        }
+      },
+      "Accounts": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "description": "현재 보유 중인 암호화폐 명"
+          },
+          "balance": {
+            "type": "string",
+            "description": "주문 가능 금액 또는 수량"
+          },
+          "locked": {
+            "type": "string",
+            "description": "주문 대기 혹은 출금 등의 이유로 사용이 불가능한 금액 또는 수량"
+          },
+          "avg_buy_price": {
+            "type": "string",
+            "description": "매수평균가"
+          },
+          "avg_buy_price_modified": {
+            "type": "boolean",
+            "description": "매수평균가 수정 여부"
+          },
+          "unit_currency": {
+            "type": "string",
+            "description": "평단가 기준 화폐"
+          }
+        }
+      }
+    }
+  }
+}
