@@ -1,0 +1,497 @@
+openapi: 3.1.0
+info:
+  title: Document Manager (doc) Tag Manager API
+  description: Openapi spec for Document Manager (doc) server
+  version: 1.0.0
+tags:
+  - name: Tag Manager
+    description: Manage Tags
+servers:
+  - url: https://service.{env}.sycle.net/doc/tags
+    variables:
+      basePath:
+        default: /
+      env:
+        default: env
+        enum:
+          - local
+          - dev01
+          - dev02
+          - stage
+          - qa
+          - na01
+          - na02
+security:
+  - CookieToken: []
+  - PlatformAuthToken: []
+paths:
+  /tags:
+    get:
+      servers:
+        - url: https://service.{env}.sycle.net/settings
+          variables:
+            env:
+              default: local
+              enum:
+                - local
+                - dev02
+                - stg01
+                - stg02
+                - na01
+                - na03
+      tags:
+        - Tag Manager
+      summary: List Tags
+      description: List tags
+      operationId: tagIndex
+      parameters:
+        - schema:
+            enum:
+              - name
+              - status
+              - context
+            type: object
+            properties:
+              name:
+                type: string
+                description: >-
+                  The name of the tag. Allows for partial matching of strings
+                  and is case insensitive.
+                example: Invoice
+              status:
+                description: >-
+                  Only list tags with a given status. Pass an empty value to
+                  retrieve tags of all status.
+                type: string
+                nullable: true
+                enum:
+                  - enabled
+                  - disabled
+                default: enabled
+              context:
+                type: string
+                description: >-
+                  Include disabled tags when they are attached to the resource
+                  specified. This should formatted as {resource-type},{uuid}
+                  with no spaces.
+                example: document,f8ffd588-22de-4fff-bd1a-7de4950081c3
+          in: query
+          name: filter
+          description: Filters to apply to the index
+          style: deepObject
+          explode: true
+        - schema:
+            type: array
+            items:
+              type: string
+              default: name
+              enum:
+                - name
+                - '-name'
+                - status
+                - '-status'
+          in: query
+          name: sort
+          description: Sorts to apply to the index
+          style: form
+          explode: false
+        - in: query
+          name: include
+          description: Relationships to include in the results
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - usage
+        - in: query
+          name: page
+          description: The page. Defaults to 1 if not used.
+          schema:
+            type: integer
+            example: 20
+            default: 1
+        - in: query
+          name: per_page
+          description: >-
+            Number of results per page you wish to fetch. Defaults to 15 if not
+            used.
+          schema:
+            type: integer
+            example: 20
+            default: 15
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - results
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: >-
+                        #/paths/~1tags/post/responses/201/content/application~1json/schema
+                  links:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        url:
+                          type: string
+                          format: uri
+                          nullable: true
+                          description: URL of the page described
+                          example: /api/resource?page=1
+                        label:
+                          type: string
+                          description: The name or index of the page described
+                          example: Previous
+                        active:
+                          type: boolean
+                          description: Is this the current page
+                    description: Response links on index requests
+                  meta:
+                    type: object
+                    properties:
+                      current_page:
+                        type: integer
+                        description: The current page in the data set
+                        example: 3
+                      first_page_url:
+                        type: string
+                        format: uri
+                        description: The path to the first page of the API
+                        example: /api/resource?page=1
+                      from:
+                        type: integer
+                        description: First item in this page of data
+                        nullable: true
+                        example: 31
+                      last_page:
+                        type: integer
+                        description: The last page in the data set
+                        example: 6
+                      last_page_url:
+                        type: string
+                        format: uri
+                        description: The path to the last page of the API
+                        example: /api/resource?page=99
+                      next_page_url:
+                        type: string
+                        format: uri
+                        nullable: true
+                        description: The path to the next page of the API
+                        example: /api/resource?page=2
+                      path:
+                        type: string
+                        format: uri
+                        description: The base path of the API
+                        example: /api/resource
+                      per_page:
+                        type: integer
+                        description: Number of results per page
+                        example: 15
+                      prev_page_url:
+                        type: string
+                        format: uri
+                        nullable: true
+                        description: The path to the previous page of the API
+                        example: /api/resource?page=2
+                      to:
+                        type: integer
+                        description: Last item in this page of data
+                        nullable: true
+                        example: 45
+                      total:
+                        type: integer
+                        description: Total number of results available for all results
+                        example: 80
+                    description: Meta information about the paged data
+    post:
+      servers:
+        - $ref: '#/paths/~1tags/get/servers/0'
+      tags:
+        - Tag Manager
+      summary: Create Tag
+      description: Store a new tag
+      operationId: tagStore
+      requestBody:
+        description: Data required to create a tag
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  description: Name of the Tag (max 50 chars)
+                  examples:
+                    - Patient Invoice
+                description:
+                  type: string
+                  description: A friendly tag description (max 150 chars)
+                  examples:
+                    - Documents related to invoicing a patient
+                  default: ''
+                status:
+                  type: string
+                  enum:
+                    - enabled
+                    - disabled
+                  default: enabled
+                color:
+                  description: A Hex string representing the color (max 6 chars)
+                  type: string
+                  examples:
+                    - F4F4F5
+                  default: F4F4F5
+      responses:
+        '201':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - uuid
+                  - name
+                allOf:
+                  - type: object
+                    required:
+                      - uuid
+                    properties:
+                      uuid:
+                        type: string
+                        format: uuid
+                        examples:
+                          - 748b2beb-0c4e-4aa6-ace8-dfcf661db85e
+                      categories:
+                        description: List of categories this tag can be applied to
+                        type: array
+                        items:
+                          - type: string
+                            examples:
+                              - document
+                              - patient
+                      usageCount:
+                        description: Total and detailed counts of usage for the tag
+                        type: object
+                        properties:
+                          total:
+                            type: integer
+                            examples:
+                              - 37
+                          details:
+                            type: array
+                            items:
+                              - type: object
+                                properties:
+                                  type:
+                                    description: >-
+                                      [Deprecated - use category] The resource
+                                      type for this count
+                                    type: string
+                                    examples:
+                                      - document
+                                      - patient
+                                  category:
+                                    description: The category for this count
+                                    $ref: >-
+                                      #/paths/~1tags/post/responses/201/content/application~1json/schema/allOf/0/properties/categories/items/0
+                                  count:
+                                    description: The count for this resource type
+                                    type: integer
+                                    examples:
+                                      - 37
+                  - $ref: >-
+                      #/paths/~1tags/post/requestBody/content/application~1json/schema
+        '403':
+          description: 403 Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    description: >-
+                      A number that is used to indicate what kind of issue
+                      occured
+                  title:
+                    type: string
+                    description: >
+                      A short, summary of the problem type. Written in english
+                      and readable
+
+                      for engineers (usually not suited for non technical
+                      stakeholders and
+
+                      not localized); example: Service Unavailable
+                  status:
+                    type: integer
+                    format: int32
+                    description: >-
+                      The HTTP status code generated by the origin server for
+                      this occurrence of the problem.
+                    minimum: 100
+                    maximum: 600
+                    exclusiveMaximum: true
+                    example: 503
+                  detail:
+                    type: string
+                    description: >-
+                      A human readable explanation specific to this occurrence
+                      of the problem.
+                    example: Connection to database timed out
+                  correlationId:
+                    type: string
+                    description: >-
+                      A unique ID for tracking a request when connecting with
+                      support
+        '409':
+          description: 409 Conflict
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/paths/~1tags/post/responses/403/content/application~1json/schema
+        '422':
+          description: 422 Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    additionalProperties:
+                      oneOf:
+                        - type: array
+                          items:
+                            type: string
+                            description: This is the specific error message
+                            default: '{error code}'
+                            example: 404 Not Found
+                        - type: string
+                          description: This is the specific error message
+                          default: '{error code}'
+                          example: 404 Not Found
+  /tags/{uuid}:
+    get:
+      servers:
+        - $ref: '#/paths/~1tags/get/servers/0'
+      tags:
+        - Tag Manager
+      summary: Show a Tag
+      description: Show a single tag
+      operationId: tagShow
+      parameters:
+        - description: UUID of the entity
+          in: path
+          required: true
+          name: uuid
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/paths/~1tags/post/responses/201/content/application~1json/schema
+        '403':
+          $ref: '#/paths/~1tags/post/responses/403'
+        '404':
+          description: 404 Not Found
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/paths/~1tags/post/responses/403/content/application~1json/schema
+    put:
+      servers:
+        - $ref: '#/paths/~1tags/get/servers/0'
+      tags:
+        - Tag Manager
+      summary: Update a Tag
+      description: Update a single tag
+      operationId: tagUpdate
+      parameters:
+        - $ref: '#/paths/~1tags~1%7Buuid%7D/get/parameters/0'
+      requestBody:
+        $ref: '#/paths/~1tags/post/requestBody'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/paths/~1tags/post/responses/201/content/application~1json/schema
+        '403':
+          $ref: '#/paths/~1tags/post/responses/403'
+        '404':
+          $ref: '#/paths/~1tags~1%7Buuid%7D/get/responses/404'
+        '409':
+          $ref: '#/paths/~1tags/post/responses/409'
+        '422':
+          $ref: '#/paths/~1tags/post/responses/422'
+    delete:
+      servers:
+        - $ref: '#/paths/~1tags/get/servers/0'
+      tags:
+        - Tag Manager
+      summary: Delete a Tag
+      description: Delete a single tag
+      operationId: tagDelete
+      parameters:
+        - $ref: '#/paths/~1tags~1%7Buuid%7D/get/parameters/0'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/paths/~1tags/post/responses/201/content/application~1json/schema
+        '403':
+          $ref: '#/paths/~1tags/post/responses/403'
+        '404':
+          $ref: '#/paths/~1tags~1%7Buuid%7D/get/responses/404'
+components:
+  securitySchemes:
+    CookieToken:
+      type: apiKey
+      in: cookie
+      name: PlatformAuthToken
+      description: Inserts the PlatformAuth JWT token in a Cookie
+    CookiePlatformResourceToken:
+      type: apiKey
+      in: cookie
+      name: PlatformResourceToken
+      description: Inserts the PlatformResource JWT token in a Cookie
+    BearerToken:
+      type: http
+      description: 'Inserts the JWT token as an Authorization: Bearer header'
+      scheme: bearer
+      bearerFormat: JWT
+    PlatformAuthToken:
+      type: http
+      description: User authentication token for the platform
+      scheme: bearer
+      bearerFormat: JWT
+    PlatformResourceToken:
+      type: http
+      description: Resource (anonymous) authentication for public access
+      scheme: bearer
+      bearerFormat: JWT
