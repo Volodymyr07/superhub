@@ -1,5 +1,5 @@
 ---
-title: Create a new Equity analysis. UPD
+title: Create a new Equity analysis.
 excerpt: Create a new analysis.
 api:
   file: api.json
