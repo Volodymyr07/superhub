@@ -1,0 +1,11 @@
+- fixedincomeanalysescontroller_create
+- fixedincomeanalysescontroller_findall
+- fixedincomeanalysescontroller_getresultsfor
+- fixedincomeanalysescontroller_counts
+- fixedincomeanalysescontroller_evaluateresultsfor
+- fixedincomeportfoliocontroller_find
+- fixedincomeportfoliocontroller_createportfolioforadvisor
+- fixedincomeportfoliocontroller_findone
+- fixedincomeportfoliocontroller_update
+- fixedincomeportfoliocontroller_softdelete
+- fixedincomeportfoliocontroller_findallversions

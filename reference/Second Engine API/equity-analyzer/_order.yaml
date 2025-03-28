@@ -1,0 +1,11 @@
+- equityanalysescontroller_create
+- equityanalysescontroller_findall
+- equityanalysescontroller_getresultsfor
+- equityanalysescontroller_counts
+- equityanalysescontroller_evaluateresultsfor
+- equityportfoliocontroller_find
+- equityportfoliocontroller_createportfolioforadvisor
+- equityportfoliocontroller_findone
+- equityportfoliocontroller_update
+- equityportfoliocontroller_softdelete
+- equityportfoliocontroller_findallversions

@@ -1,0 +1,11 @@
+- multiassetanalysescontroller_create
+- multiassetanalysescontroller_findall
+- multiassetanalysescontroller_getresultsfor
+- multiassetanalysescontroller_counts
+- multiassetanalysescontroller_getorevaluateresults
+- multiassetportfoliocontroller_find
+- multiassetportfoliocontroller_createportfolioforadvisor
+- multiassetportfoliocontroller_findone
+- multiassetportfoliocontroller_update
+- multiassetportfoliocontroller_softdelete
+- multiassetportfoliocontroller_findallversions

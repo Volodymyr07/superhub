@@ -1,0 +1,5 @@
+- investmentcontroller_create
+- investmentcontroller_find
+- investmentcontroller_findbyassetid
+- investmentcontroller_evaluateresultsfor
+- investmentcontroller_getresultsfor
