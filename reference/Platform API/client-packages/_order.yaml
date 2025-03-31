@@ -1,0 +1,6 @@
+- post_clients-payment-client-packages-update-usage
+- get_clients-payment-client-packages-validate
+- get_clients-client-id-payment-client-packages
+- post_payment-client-packages
+- put_payment-client-packages-cancel-redemption
+- post_payment-client-packages-update-usage

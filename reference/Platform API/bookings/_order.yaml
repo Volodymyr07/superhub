@@ -1,0 +1,6 @@
+- get_scheduling-bookings
+- post_scheduling-bookings
+- post_scheduling-bookings-cancel
+- put_scheduling-bookings-booking-uid-update-rsvp-state
+- post_scheduling-waitlist
+- put_scheduling-waitlist-cancel

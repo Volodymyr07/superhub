@@ -1,0 +1,8 @@
+- get_apps
+- post_apps
+- get_apps-id
+- put_apps-id
+- post_apps-id-assign
+- post_apps-id-install-app
+- post_apps-id-unassign
+- post_apps-id-uninstall-app

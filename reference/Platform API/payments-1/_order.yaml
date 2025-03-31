@@ -1,0 +1,5 @@
+- get_clients-client-id-payments
+- get_payments
+- post_payments
+- get_payments-payment-id
+- post_payments-payment-uid-match

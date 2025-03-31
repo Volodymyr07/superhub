@@ -1,0 +1,9 @@
+- get_businesses
+- post_businesses
+- get_businesses-validate-login
+- post_businesses-verify-audience-claim
+- get_businesses-business-id
+- post_businesses-business-id
+- get_businesses-business-id-features
+- put_businesses-business-id-purchased-items
+- get_businesses-business-id-recurly-data

@@ -1,0 +1,5 @@
+- get_clients
+- post_clients
+- delete_clients-client-id
+- get_clients-client-id
+- put_clients-client-id
