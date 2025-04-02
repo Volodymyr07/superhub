@@ -1,0 +1,4 @@
+---
+title: AccommodationTranslation
+hidden: false
+---

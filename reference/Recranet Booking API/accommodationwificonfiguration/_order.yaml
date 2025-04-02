@@ -1,0 +1,5 @@
+- get_api_accommodation_wifi_configurations_index
+- post_api_accommodation_wifi_configurations_create
+- get_api_accommodation_wifi_configurations_show
+- put_api_accommodation_wifi_configurations_update
+- delete_api_accommodation_wifi_configurations_delete

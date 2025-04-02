@@ -1,0 +1,6 @@
+- get_api_transactions
+- post_api_transactions_create
+- get_api_transactions_show
+- put_api_transactions_update
+- delete_api_transactions_delete
+- post_api_transactions_cancel

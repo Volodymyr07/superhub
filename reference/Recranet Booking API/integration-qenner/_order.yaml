@@ -1,0 +1,14 @@
+- get_api_qenner_accommodation_price_component_groups_lookup
+- get_api_qenner_accommodations_index
+- get_api_qenner_accommodations_show
+- get_api_qenner_accounts_index
+- get_api_qenner_accounts_show
+- get_api_qenner_length_of_stay_periods_index
+- get_api_qenner_length_of_stay_periods_show
+- put_api_qenner_length_of_stay_periods_batch
+- get_api_qenner_supplements_index
+- get_api_qenner_supplements_show
+- get_api_qenner_tour_operators_index
+- get_api_qenner_tour_operators_show
+- get_api_qenner_tour_operator_specifications_index
+- get_api_qenner_tour_operator_specifications_show

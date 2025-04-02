@@ -1,0 +1,4 @@
+---
+title: CampingEquipmentSpecification
+hidden: false
+---

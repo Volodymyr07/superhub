@@ -1,0 +1,4 @@
+---
+title: Accommodation
+hidden: false
+---

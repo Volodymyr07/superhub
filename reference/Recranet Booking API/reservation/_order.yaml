@@ -1,0 +1,14 @@
+- get_api_reservations_lookup
+- post_api_reservations_create
+- get_api_reservation_summaries
+- get_api_reservations_show
+- put_api_reservations_update
+- get_api_reservations_cancellation_insurance
+- get_api_reservations_guests
+- get_api_reservations_additional_guests
+- get_api_reservations_registration_number_activities
+- get_api_reservations_utility_meter_consumption
+- put_api_reservations_place
+- put_api_reservations_confirm
+- put_api_reservations_cancel
+- post_api_reservations_supplement_order_lines_quantity

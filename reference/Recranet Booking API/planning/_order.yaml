@@ -1,0 +1,3 @@
+- get_api_planning_assigned_dates
+- get_api_planning_available_units
+- get_api_planning_checkin_checkout_dates

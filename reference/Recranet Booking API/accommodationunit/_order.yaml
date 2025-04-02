@@ -1,0 +1,3 @@
+- get_api_accommodation_units
+- get_api_accommodation_units_show
+- put_api_accommodation_units_update_availability

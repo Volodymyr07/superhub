@@ -1,0 +1,4 @@
+---
+title: AccommodationCategory
+hidden: false
+---

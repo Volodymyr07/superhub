@@ -1,0 +1,4 @@
+---
+title: LocalityCategory
+hidden: false
+---

@@ -1,0 +1,5 @@
+- get_api_access_locks_index
+- post_api_access_locks_create
+- get_api_access_locks_show
+- put_api_access_locks_update
+- delete_api_access_locks_delete

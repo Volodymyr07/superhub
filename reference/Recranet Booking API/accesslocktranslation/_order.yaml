@@ -1,0 +1,4 @@
+- get_api_access_lock_translations_index
+- post_api_access_lock_translations_create
+- put_api_access_lock_translations_update
+- delete_api_access_lock_translations_delete

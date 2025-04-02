@@ -1,0 +1,7 @@
+- get_integration_easysecure_configurations_index
+- get_integration_easysecure_users_index
+- get_integration_easysecure_users_show
+- put_integration_easysecure_users_update
+- delete_integration_easysecure_users_delete
+- post_integration_easysecure_users_photo
+- post_integration_easysecure_users_sync

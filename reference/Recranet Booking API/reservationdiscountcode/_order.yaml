@@ -1,0 +1,3 @@
+- get_api_reservation_discount_codes_current
+- get_api_reservation_discount_codes_validate
+- post_api_reservation_discount_codes_redeem

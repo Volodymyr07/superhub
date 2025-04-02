@@ -1,0 +1,4 @@
+---
+title: AccommodationWifiConfiguration
+hidden: false
+---
