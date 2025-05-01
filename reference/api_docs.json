@@ -1,0 +1,1813 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Collect API",
+    "version": "1.0.0",
+    "description": "This API is used for collecting events.",
+    "contact": {
+      "name": "Zitcha Support"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://client.collect.zitcha.app/com.snowplowanalytics.iglu/v1"
+    }
+  ],
+  "paths": {
+    "/": {
+      "post": {
+        "tags": ["Ad Events"],
+        "summary": "Ad Events",
+        "description": "Endpoint to collect various types of ad events.",
+        "operationId": "ad-events",
+        "parameters": [
+          {
+            "name": "ad-impressions",
+            "in": "query",
+            "description": "The type of event being collected.",
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ad-click",
+            "in": "query",
+            "description": "The type of event being collected.",
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ad-conversions",
+            "in": "query",
+            "description": "The type of event being collected.",
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page-view",
+            "in": "query",
+            "description": "The type of event being collected.",
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "video-ad-progress",
+            "in": "query",
+            "description": "The type of event being collected.",
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "video-ad-start",
+            "in": "query",
+            "description": "The type of event being collected.",
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "product-update",
+            "in": "query",
+            "description": "The type of event being collected.",
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "retail-location-update",
+            "in": "query",
+            "description": "The type of event being collected.",
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "stock-count",
+            "in": "query",
+            "description": "The type of event being collected.",
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "purchase",
+            "in": "query",
+            "description": "The type of event being collected.",
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/AdImpression"
+                  },
+                  {
+                    "$ref": "#/components/schemas/AdClick"
+                  },
+                  {
+                    "$ref": "#/components/schemas/AdConversion"
+                  },
+                  {
+                    "$ref": "#/components/schemas/PageView"
+                  },
+                  {
+                    "$ref": "#/components/schemas/VideoAdProgress"
+                  },
+                  {
+                    "$ref": "#/components/schemas/VideoAdStart"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ProductUpdate"
+                  },
+                  {
+                    "$ref": "#/components/schemas/RetailLocationUpdate"
+                  },
+                  {
+                    "$ref": "#/components/schemas/StockCount"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Purchase"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "example": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Action": {
+        "type": "string",
+        "enum": ["sale", "checkout", "signup", "add-to-cart"],
+        "title": "Action"
+      },
+      "AdClick": {
+        "properties": {
+          "customer_identifiers": {
+            "items": {
+              "$ref": "#/components/schemas/CustomerIdentifierItem"
+            },
+            "type": "array",
+            "title": "Customer Identifiers",
+            "description": "A list of identifiers for the customer generating the event."
+          },
+          "page_view_id": {
+            "type": "string",
+            "maxLength": 36,
+            "minLength": 1,
+            "title": "Page View Id",
+            "description": "A globally unique identifier for the PageView."
+          },
+          "page_location": {
+            "type": "string",
+            "title": "Page Location",
+            "description": "The location that the page was visited."
+          },
+          "click_id": {
+            "type": "string",
+            "maxLength": 36,
+            "minLength": 1,
+            "title": "Click Id",
+            "description": "A globally unique identifier for the AdClick."
+          },
+          "placement_id": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Placement Id",
+            "description": "The Webspace ID. This should have a direct relationship with the Retailer ID hosting the ad unit."
+          },
+          "ad_id": {
+            "type": "string",
+            "maxLength": 36,
+            "minLength": 32,
+            "title": "Ad Id",
+            "description": "The Zitcha Ad Id that this click is associated with."
+          },
+          "ad_format": {
+            "$ref": "#/components/schemas/AdFormat",
+            "description": "The ad format."
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source",
+            "description": "The source where the ad was targeted."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "customer_identifiers",
+          "page_view_id",
+          "page_location",
+          "click_id",
+          "placement_id",
+          "ad_id",
+          "ad_format",
+          "source"
+        ],
+        "title": "AdClick",
+        "description": "AdClick is a model for the AdClick event. It is used to track when a user clicks on an ad.",
+        "examples": [
+          {
+            "data": {
+              "ad_format": "native_banner",
+              "ad_id": "e2caecae-e9b9-4880-8265-4b6430036c29",
+              "click_id": "cbb7a30b-f5b1-42e6-b8f8-94385638d64f",
+              "customer_identifiers": [
+                {
+                  "system": "local_storage",
+                  "type": "browser_id",
+                  "value": "mawhsxpmzr.1685916038987"
+                }
+              ],
+              "page_location": "https://www.example.com/awesome-page",
+              "page_view_id": "a293a6f7-1d57-4a80-9886-e88a87fa7ed8",
+              "placement_id": "aa2dc3be-66cd-48d2-998c-88e7b901cd33",
+              "source": "web"
+            },
+            "schema": "iglu:com.zitcha/ad_click/jsonschema/1-0-6"
+          }
+        ]
+      },
+      "AdConversion": {
+        "properties": {
+          "customer_identifiers": {
+            "items": {
+              "$ref": "#/components/schemas/CustomerIdentifierItem"
+            },
+            "type": "array",
+            "title": "Customer Identifiers",
+            "description": "A list of identifiers for the customer generating the event."
+          },
+          "conversion_id": {
+            "type": "string",
+            "maxLength": 36,
+            "minLength": 1,
+            "title": "Conversion Id",
+            "description": "A globally unique identifier for the conversion."
+          },
+          "action": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Action"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "An optional field such as `sale`, `checkout` or `signup`"
+          },
+          "retailer_order_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retailer Order Id",
+            "description": "A unique identifier representing the order as provided by the Retailer."
+          },
+          "page_location": {
+            "type": "string",
+            "title": "Page Location",
+            "description": "The location that the page was visited."
+          },
+          "basket": {
+            "$ref": "#/components/schemas/Basket",
+            "description": "The basket for the event."
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source",
+            "description": "The source where the ad was targeted."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "customer_identifiers",
+          "retailer_order_id",
+          "page_location",
+          "basket",
+          "source"
+        ],
+        "title": "AdConversion",
+        "description": "The AdConversion event is fired when a conversion occurs.",
+        "examples": [
+          {
+            "data": {
+              "action": "sale",
+              "basket": {
+                "currency": "USD",
+                "products": [
+                  {
+                    "price_paid": 10,
+                    "product_id": "p1",
+                    "product_name": "Product 1",
+                    "quantity": 2
+                  },
+                  {
+                    "price_paid": 20,
+                    "product_id": "p2",
+                    "product_name": "Product 2",
+                    "quantity": 1
+                  }
+                ],
+                "value": 40
+              },
+              "conversion_id": "ce3344b5-ce07-4c01-8912-026bdf99c03b",
+              "customer_identifiers": [
+                {
+                  "system": "local_storage",
+                  "type": "browser_id",
+                  "value": "mawhsxpmzr.1685916038987"
+                },
+                {
+                  "system": "global",
+                  "type": "email",
+                  "value": "jane@extramail.test"
+                }
+              ],
+              "page_location": "https://www.example.com/awesome-page",
+              "retailer_order_id": "8120b535-a7d0-4fb5-a9dd-c9f4542c57f8",
+              "source": "web"
+            },
+            "schema": "iglu:com.zitcha/ad_conversion/jsonschema/1-0-4"
+          }
+        ]
+      },
+      "AdFormat": {
+        "type": "string",
+        "enum": ["native_banner", "native_product", "brand_store"],
+        "title": "AdFormat",
+        "description": "The ad format of the ad. The enum values cover the following ad formats:\n- native_banner (Display banner)\n- native_product (Sponsored product)\n- brand_store (Branded content)"
+      },
+      "AdImpression": {
+        "properties": {
+          "customer_identifiers": {
+            "items": {
+              "$ref": "#/components/schemas/CustomerIdentifierItem"
+            },
+            "type": "array",
+            "title": "Customer Identifiers",
+            "description": "A list of identifiers for the customer generating the event."
+          },
+          "page_view_id": {
+            "type": "string",
+            "maxLength": 36,
+            "minLength": 1,
+            "title": "Page View Id",
+            "description": "A globally unique identifier for the PageView."
+          },
+          "page_location": {
+            "type": "string",
+            "title": "Page Location",
+            "description": "The location that the page was visited."
+          },
+          "placement_id": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Placement Id",
+            "description": "The Webspace ID or Block ID."
+          },
+          "ad_id": {
+            "type": "string",
+            "maxLength": 36,
+            "minLength": 32,
+            "title": "Ad Id",
+            "description": "The Zitcha Ad Id that this impression is associated with."
+          },
+          "target_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Url",
+            "description": "The destination URL that this ad unit will direct the user to."
+          },
+          "ad_format": {
+            "$ref": "#/components/schemas/AdFormat",
+            "description": "The ad format."
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source",
+            "description": "The source where the ad was targeted."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "customer_identifiers",
+          "page_view_id",
+          "page_location",
+          "placement_id",
+          "ad_id",
+          "ad_format",
+          "source"
+        ],
+        "title": "AdImpression",
+        "description": "The AdImpression event is fired when an ad unit is displayed.",
+        "examples": [
+          {
+            "data": {
+              "ad_format": "native_banner",
+              "ad_id": "e2caecae-e9b9-4880-8265-4b6430036c29",
+              "customer_identifiers": [
+                {
+                  "system": "local_storage",
+                  "type": "browser_id",
+                  "value": "mawhsxpmzr.1685916038987"
+                }
+              ],
+              "page_location": "https://www.example.com/awesome-page",
+              "page_view_id": "a293a6f7-1d57-4a80-9886-e88a87fa7ed8",
+              "placement_id": "aa2dc3be-66cd-48d2-998c-88e7b901cd33",
+              "source": "web"
+            },
+            "schema": "iglu:com.zitcha/ad_impression/jsonschema/1-0-5"
+          }
+        ]
+      },
+      "Address": {
+        "properties": {
+          "street": {
+            "type": "string",
+            "maxLength": 4096,
+            "title": "Street",
+            "description": "Street and number for the address of the user."
+          },
+          "city": {
+            "type": "string",
+            "maxLength": 4096,
+            "title": "City",
+            "description": "City for the address of the user."
+          },
+          "region": {
+            "type": "string",
+            "maxLength": 4096,
+            "title": "Region",
+            "description": "State or territory for the address of the user."
+          },
+          "postal_code": {
+            "type": "string",
+            "maxLength": 4096,
+            "title": "Postal Code",
+            "description": "Postal code for the address of the user."
+          },
+          "country": {
+            "type": "string",
+            "maxLength": 4096,
+            "title": "Country",
+            "description": "Country code for the address of the user."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "Address",
+        "description": "A physical address."
+      },
+      "AgeGroupEnum": {
+        "type": "string",
+        "enum": [
+          "adult",
+          "all ages",
+          "teen",
+          "kids",
+          "toddler",
+          "infant",
+          "newborn"
+        ],
+        "title": "AgeGroupEnum"
+      },
+      "AvailabilityEnum": {
+        "type": "string",
+        "enum": ["in_stock", "out_of_stock", "preorder", "backorder"],
+        "title": "AvailabilityEnum"
+      },
+      "AvailableChannel": {
+        "type": "string",
+        "enum": [
+          "store",
+          "warehouse",
+          "ecommerce",
+          "facebook",
+          "google",
+          "digital_screens",
+          "tiktok"
+        ],
+        "title": "AvailableChannel"
+      },
+      "AvailablityTypes": {
+        "type": "string",
+        "enum": ["in_stock", "out_of_stock"],
+        "title": "AvailablityTypes",
+        "description": "The type of the product identifier. The enum values cover the following product identifiers:"
+      },
+      "Basket": {
+        "properties": {
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 3,
+                "minLength": 3
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency",
+            "description": "Currency of the products associated with the basket, in 3-letter ISO 4217 format. Is required, if value is set."
+          },
+          "value": {
+            "type": "number",
+            "minimum": 0,
+            "title": "Value",
+            "description": "The monetary value of the basket."
+          },
+          "products": {
+            "items": {
+              "$ref": "#/components/schemas/Product"
+            },
+            "type": "array",
+            "title": "Products",
+            "description": "The products for the basket."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["currency", "value", "products"],
+        "title": "Basket"
+      },
+      "ConditionEnum": {
+        "type": "string",
+        "enum": ["new", "refurbished", "used"],
+        "title": "ConditionEnum"
+      },
+      "CustomAttribute": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "value": {
+            "type": "string",
+            "title": "Value"
+          }
+        },
+        "type": "object",
+        "required": ["name", "type", "value"],
+        "title": "CustomAttribute"
+      },
+      "CustomerIdentifierItem": {
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/CustomerIdentifierType",
+            "description": "The type of the identifier."
+          },
+          "value": {
+            "type": "string",
+            "maxLength": 4096,
+            "title": "Value",
+            "description": "The identifier value."
+          },
+          "system": {
+            "type": "string",
+            "maxLength": 4096,
+            "title": "System",
+            "description": "The namespace or system that the identifier belongs to. e.g. `global`, `local`, `crm`, `loyalty_program`."
+          }
+        },
+        "type": "object",
+        "required": ["type", "value", "system"],
+        "title": "CustomerIdentifierItem",
+        "description": "A customer identifier.\n\nA customer identifier is a unique identifier that is used to identify a customer. It can be an email address, a customer ID, a loyalty ID, a username, a browser ID, a device ID, a device fingerprint, or a hash of one of these identifiers. The type of the identifier is specified in the `type` field.\n\nWhere identiefiers exist in a global namespace, such as email addresses, the `system` should be set to `global`.\nWhere identifiers exist in a perishable, local namespace, such as browser IDs, the `system` should be set to `local`.\nFor owned and operated systems containing their own namespace, such as a CRM or Loyalty Program, the `system` should be set to the name of the system."
+      },
+      "CustomerIdentifierType": {
+        "type": "string",
+        "enum": [
+          "email",
+          "emailhash_md5",
+          "emailhash_sha1",
+          "emailhash_sha256",
+          "hash",
+          "uuid",
+          "customer_id",
+          "crm_id",
+          "loyalty_id",
+          "username",
+          "browser_id",
+          "device_id",
+          "device_fingerprint",
+          "session_id"
+        ],
+        "title": "CustomerIdentifierType",
+        "description": "The type of the customer identifier. The enum values cover the following customer identifiers:\n- `email` Email Address\n- `emailhash_md5` MD5 Hash of Email Address\n- `emailhash_sha1` SHA1 Hash of Email Address\n- `emailhash_sha256` SHA256 Hash of Email Address\n- `hash` Hash of an identifier\n- `uuid` UUID (Universally Unique Identifier)\n- `customer_id` Customer ID\n- `crm_id` CRM ID\n- `loyalty_id` Loyalty ID\n- `username` Username (e.g. Twitter, Facebook or community forum username)\n- `browser_id` Browser ID\n- `device_id` Device ID\n- `device_fingerprint` Device Fingerprint\n\nPhone numbers and IP addresses are not included in this list because they are not considered reliable identifiers."
+      },
+      "GenderEnum": {
+        "type": "string",
+        "enum": ["female", "male", "unisex"],
+        "title": "GenderEnum"
+      },
+      "PageType": {
+        "type": "string",
+        "enum": [
+          "home",
+          "category",
+          "search",
+          "details",
+          "gallery",
+          "article",
+          "branded",
+          "cart",
+          "conversion",
+          "account",
+          "about"
+        ],
+        "title": "PageType",
+        "description": "The type of the page. The enum values cover the following page types:\n- home (Homepage)\n- category (Category Listing)\n- search (Search Listing)\n- details (Product Details Page)\n- gallery (Gallery Page showing images of one or more products)\n- article (Article Page with content)\n- branded (Brand Store, Brand Search)\n- cart (Cart Selection, Cart Review, Cart Confirmation)\n- conversion (Order Confirmation, Order Complete)\n- account (Login/Signup, Account Management, Wishlist/Favorites, Customer Support/Help, Shipping and Returns)\n- about (About Us, Contact Us, Sitemap, Privacy Policy, Terms and Conditions, Reviews/Testimonials)"
+      },
+      "PageView": {
+        "properties": {
+          "customer_identifiers": {
+            "items": {
+              "$ref": "#/components/schemas/CustomerIdentifierItem"
+            },
+            "type": "array",
+            "title": "Customer Identifiers",
+            "description": "A list of identifiers for the customer generating the event."
+          },
+          "page_view_id": {
+            "type": "string",
+            "maxLength": 36,
+            "minLength": 1,
+            "title": "Page View Id",
+            "description": "A globally unique identifier for the PageView"
+          },
+          "page_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PageType"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The type of the page that was visited."
+          },
+          "page_location": {
+            "type": "string",
+            "title": "Page Location",
+            "description": "The location that the page was visited."
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 128
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language",
+            "description": "The language that the web page is based in."
+          },
+          "locale": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 128
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Locale",
+            "description": "The locale version of the site that is running."
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source",
+            "description": "The source where the ad was targeted."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "customer_identifiers",
+          "page_view_id",
+          "page_location",
+          "source"
+        ],
+        "title": "PageView",
+        "description": "The PageView event is fired when a page is loaded.",
+        "examples": [
+          {
+            "data": {
+              "customer_identifiers": [
+                {
+                  "system": "local_storage",
+                  "type": "browser_id",
+                  "value": "mawhsxpmzr.1685916038987"
+                }
+              ],
+              "language": "en",
+              "locale": "US",
+              "page_location": "https://www.example.com/awesome-page",
+              "page_type": "category",
+              "page_view_id": "d74c18f8-9de7-4f6c-8100-ce6f06528a54",
+              "source": "web"
+            },
+            "schema": "iglu:com.zitcha/page_view/jsonschema/1-0-3"
+          }
+        ]
+      },
+      "Product": {
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "maxLength": 500,
+            "title": "Product Id",
+            "description": "The ID of the product."
+          },
+          "product_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Name",
+            "description": "The name of the product."
+          },
+          "price_paid": {
+            "type": "number",
+            "minimum": 0,
+            "title": "Price Paid",
+            "description": "The monetary price of the product, in units of the specified currency parameter."
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Quantity",
+            "description": "The quantity of the product."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["product_id", "price_paid", "quantity"],
+        "title": "Product"
+      },
+      "ProductIdentifier": {
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/ProductIdentifierType",
+            "description": "The type of the identifier. For example product_id SKU or UPC."
+          },
+          "value": {
+            "type": "string",
+            "maxLength": 500,
+            "title": "Value",
+            "description": "The identifier value."
+          },
+          "system": {
+            "type": "string",
+            "maxLength": 500,
+            "title": "System",
+            "description": "The system that the identifier belongs to. For example, the name of the retailers product catalog, ERP or information system."
+          }
+        },
+        "type": "object",
+        "required": ["type", "value", "system"],
+        "title": "ProductIdentifier"
+      },
+      "ProductIdentifierType": {
+        "type": "string",
+        "enum": [
+          "product_id",
+          "sku",
+          "upc",
+          "asin",
+          "ean",
+          "isbn",
+          "mpn",
+          "gtin",
+          "jan",
+          "nsn",
+          "plu",
+          "serial_number",
+          "model_number"
+        ],
+        "title": "ProductIdentifierType",
+        "description": "The type of the product identifier. The enum values cover the following product identifiers:\n- `product_id` Product ID: This is a unique identifier that a company assigns to its products. It's used internally to track products and is usually not visible to customers. The format and structure of a Product ID can vary widely from company to company. It could be numeric, alphanumeric, or a mix of both and often includes information about the product category, the manufacturer, and specific product details.\n- `sku` SKU (Stock Keeping Unit): An SKU is a unique identifier that businesses use to track a specific item for inventory purposes. SKUs are often alphanumeric and can be designed to include a wide variety of information. For example, a retailer selling shoes might use an SKU that includes information about the style, color, and size of a pair of shoes. SKUs are company-specific. That means that each company has its own set of SKUs that are not shared or standardized across the industry.\n- `upc` UPC (Universal Product Code): UPCs are standardized barcodes that are used across the entire retail industry. Each UPC is unique to the product it's attached to, and no two products share the same UPC. These barcodes are typically 12 digits long, with the first six to nine digits representing the company that manufactures or sells the product, and the remaining digits identifying the specific product and its attributes. The final digit is a check digit used to ensure the barcode has been entered (or scanned) correctly. The UPC system is managed by the GS1 organization, which ensures that each code is unique worldwide.\n- `asin` ASIN (Amazon Standard Identification Numbers): This is a 10-character alphanumeric unique identifier that is assigned by Amazon to products that are sold through its platform.\n- `ean` EAN (European Article Number): This is a barcode symbology that's primarily used in Europe for books, groceries, and other products.\n- `isbn` ISBN (International Standard Book Number): This is an identifier that's used specifically for books.\n- `mpn` MPN (Manufacturer Part Number): Used to identify a specific part of a product, typically used in manufacturing industries.\n- `gtin` GTIN (Global Trade Item Number): This is a general term that encompasses UPC, EAN, and other barcode identifiers.\n- `jan` JAN (Japanese Article Number): This is a barcode symbology that's primarily used in Japan.\n- `nsn` NSN (National Stock Number): This is a 13-digit numeric code that identifies all the 'standardized material items of supply' as they have been recognized by all NATO countries.\n- `plu` PLU (Price Look Up): This is used in supermarkets for fresh produce and bulk items, where UPCs are not feasible.\n- `serial_number` Serial Number: A unique identifier assigned by the manufacturer.\n- `model_number` Model Number: Identifier assigned by the manufacturer to indicate a product's design and features."
+      },
+      "ProductUpdate": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 36,
+            "title": "Id",
+            "description": "The stock keeping unit or ID of the product."
+          },
+          "product_identifiers": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ProductIdentifier"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Identifiers",
+            "description": "The ID of the product."
+          },
+          "gtin": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 14
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gtin",
+            "description": "Global Trade Item Number."
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 500,
+            "title": "Title",
+            "description": "Title of the product."
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "Detailed description of the product."
+          },
+          "category_paths": {
+            "items": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": "array",
+            "title": "Category Paths",
+            "description": "Product category in a hierarchical format, from highest to lowest. Either comma or > separated"
+          },
+          "google_product_category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Google Product Category",
+            "description": "Google product category."
+          },
+          "link": {
+            "type": "string",
+            "maxLength": 2083,
+            "minLength": 1,
+            "format": "uri",
+            "title": "Link",
+            "description": "URL to the product page."
+          },
+          "image_link": {
+            "type": "string",
+            "maxLength": 2083,
+            "minLength": 1,
+            "format": "uri",
+            "title": "Image Link",
+            "description": "URL to the product image."
+          },
+          "additional_image_link": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string",
+                  "maxLength": 2083,
+                  "minLength": 1,
+                  "format": "uri"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Additional Image Link",
+            "description": "Additional image URLs of the product."
+          },
+          "video_link": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string",
+                  "maxLength": 2083,
+                  "minLength": 1,
+                  "format": "uri"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Video Link",
+            "description": "The video URLs of the product."
+          },
+          "search_terms": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Search Terms",
+            "description": "Keywords associated with the product."
+          },
+          "brand": {
+            "type": "string",
+            "maxLength": 500,
+            "title": "Brand",
+            "description": "Brand name of the product."
+          },
+          "price": {
+            "type": "number",
+            "minimum": 0,
+            "title": "Price",
+            "description": "Price of the product."
+          },
+          "currency": {
+            "type": "string",
+            "maxLength": 3,
+            "title": "Currency",
+            "description": "Currency of the price in ISO 4217 format."
+          },
+          "availability": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AvailabilityEnum"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Product availability status.",
+            "default": "in_stock"
+          },
+          "condition": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ConditionEnum"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Condition of the product.",
+            "default": "new"
+          },
+          "expiration_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expiration Date",
+            "description": "Expiration date of the product."
+          },
+          "sale_price": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sale Price",
+            "description": "Sale price of the product."
+          },
+          "sale_price_effective_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sale Price Effective Date",
+            "description": "Effective date range for the sale price."
+          },
+          "color": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Color",
+            "description": "Color of the product."
+          },
+          "gender": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GenderEnum"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Intended gender for the product."
+          },
+          "size": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Size",
+            "description": "Size of the product."
+          },
+          "item_group_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Item Group Id",
+            "description": "ID for grouping products."
+          },
+          "age_group": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AgeGroupEnum"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Intended age group for the product."
+          },
+          "attributes": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/CustomAttribute"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Attributes",
+            "description": "Custom attributes for additional product details."
+          },
+          "supplier_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supplier Id",
+            "description": "The supplier's id"
+          },
+          "channels_available": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/AvailableChannel"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Channels Available",
+            "description": "The available channels."
+          },
+          "system": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "System",
+            "description": "The system from which your product feed originates e.g \"products up\", \"shopify\""
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "description",
+          "category_paths",
+          "link",
+          "image_link",
+          "brand",
+          "price",
+          "currency"
+        ],
+        "title": "ProductUpdate",
+        "description": "Add or update a product.",
+        "examples": [
+          {
+            "data": {
+              "additional_image_link": [
+                "http://example.com/product1.jpg",
+                "http://example.com/product2.jpg"
+              ],
+              "age_group": "all ages",
+              "attributes": [
+                {
+                  "name": "warranty",
+                  "type": "string",
+                  "value": "2 years"
+                },
+                {
+                  "name": "material",
+                  "type": "string",
+                  "value": "Plastic"
+                }
+              ],
+              "availability": "in_stock",
+              "brand": "SampleBrand",
+              "category_paths": [
+                ["Mobile & Smart Devices", "Phones", "Smartphones", "Android"]
+              ],
+              "channels_available": ["store", "warehouse"],
+              "color": "Red",
+              "condition": "new",
+              "currency": "USD",
+              "description": "A detailed description of the sample product.",
+              "expiration_date": "2024-12-31T23:59:59Z",
+              "gender": "unisex",
+              "google_product_category": "Electronics",
+              "gtin": "12345678901234",
+              "id": "1234567890123456789",
+              "image_link": "http://example.com/product.jpg",
+              "item_group_id": "group123",
+              "link": "http://example.com/product",
+              "price": 99.99,
+              "product_identifiers": [
+                {
+                  "system": "product_system",
+                  "type": "product_id",
+                  "value": "2045"
+                }
+              ],
+              "sale_price": 89.99,
+              "sale_price_effective_date": "2024-08-01T00:00:00Z",
+              "search_terms": ["gadget", "electronics"],
+              "size": "M",
+              "supplier_id": "6e21ab79-38ae-47d6-bc40-80a86606c3e6",
+              "title": "Sample Product",
+              "video_link": ["http://example.com/video.mp4"]
+            },
+            "schema": "iglu:com.zitcha/product_update/jsonschema/1-0-8"
+          }
+        ]
+      },
+      "Purchase": {
+        "properties": {
+          "event_name": {
+            "type": "string",
+            "maxLength": 36,
+            "minLength": 1,
+            "title": "Event Name",
+            "description": "Name of the event and corresponding schema.",
+            "default": "purchase"
+          },
+          "action_at": {
+            "type": "string",
+            "maxLength": 30,
+            "minLength": 4,
+            "title": "Action At",
+            "description": "The time the stock count was taken. This should be a string in ISO 8601 format. If not provided, the time of the event will be used."
+          },
+          "retailer_order_id": {
+            "type": "string",
+            "maxLength": 36,
+            "minLength": 1,
+            "title": "Retailer Order Id",
+            "description": "A unique identifier representing the order as provided by the Retailer"
+          },
+          "customer_identifiers": {
+            "items": {
+              "$ref": "#/components/schemas/CustomerIdentifierItem"
+            },
+            "type": "array",
+            "title": "Customer Identifiers",
+            "description": "A list of identifiers for the customer generating the event."
+          },
+          "action": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Action",
+            "description": "An optional field such as `sale`, `checkout` or `signup`"
+          },
+          "store_id": {
+            "type": "string",
+            "title": "Store Id"
+          },
+          "coupon_code": {
+            "type": "string",
+            "title": "Coupon Code",
+            "description": "A strict string for the coupon code applied to the purchase, if any."
+          },
+          "basket": {
+            "$ref": "#/components/schemas/Basket",
+            "description": "The basket for the event."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "retailer_order_id",
+          "customer_identifiers",
+          "store_id",
+          "coupon_code",
+          "basket"
+        ],
+        "title": "Purchase",
+        "description": "The Purchase event registers a customer transaction at a physical or digtal store.",
+        "examples": [
+          {
+            "data": {
+              "action": "purchase",
+              "action_at": "2023-06-06T03:47:36+0000",
+              "basket": {
+                "currency": "USD",
+                "products": [
+                  {
+                    "price_paid": 10,
+                    "product_id": "p1",
+                    "product_name": "Product 1",
+                    "quantity": 2
+                  },
+                  {
+                    "price_paid": 20,
+                    "product_id": "p2",
+                    "product_name": "Product 2",
+                    "quantity": 1
+                  }
+                ],
+                "value": 40
+              },
+              "coupon_code": "5OFF",
+              "customer_identifiers": [
+                {
+                  "system": "global",
+                  "type": "email",
+                  "value": "jane@extramail.test"
+                },
+                {
+                  "system": "global",
+                  "type": "emailhash_sha256",
+                  "value": "efac902195fccc71a84321e85890f4bbfd96ef8b304279938d5c1e22b7326458"
+                }
+              ],
+              "retailer_order_id": "order123",
+              "store_id": "ST04"
+            },
+            "schema": "iglu:com.zitcha/purchase/jsonschema/1-0-0"
+          }
+        ]
+      },
+      "RetailLocationType": {
+        "type": "string",
+        "enum": ["store", "warehouse"],
+        "title": "RetailLocationType",
+        "description": "The type of the retail location. The enum values cover the following retail location types:\n- store (Physical store)\n- warehouse (Warehouse)"
+      },
+      "RetailLocationUpdate": {
+        "properties": {
+          "event_name": {
+            "type": "string",
+            "maxLength": 36,
+            "minLength": 1,
+            "title": "Event Name",
+            "description": "Name of the event and corresponding schema.",
+            "default": "retail_location_update"
+          },
+          "location_id": {
+            "type": "string",
+            "maxLength": 500,
+            "title": "Location Id",
+            "description": "The ID of the retail location."
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address",
+            "description": "The address of the retail location."
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 500,
+            "title": "Name",
+            "description": "The name of the retail location."
+          },
+          "type": {
+            "$ref": "#/components/schemas/RetailLocationType",
+            "description": "The type of the retail location."
+          },
+          "group": {
+            "type": "string",
+            "maxLength": 500,
+            "title": "Group",
+            "description": "The group of the retail location."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["location_id", "address", "name", "type"],
+        "title": "RetailLocationUpdate",
+        "description": "The update of a retail location.",
+        "examples": [
+          {
+            "data": {
+              "address": {
+                "city": "Anytown",
+                "country": "US",
+                "postal_code": "12345",
+                "region": "CA",
+                "street": "123 Main St"
+              },
+              "group": "east",
+              "location_id": "12345",
+              "name": "My Store",
+              "type": "store"
+            },
+            "schema": "iglu:com.zitcha/retaile_location_update/jsonschema/1-0-0"
+          }
+        ]
+      },
+      "Source": {
+        "type": "string",
+        "enum": ["web", "app", "mobile"],
+        "title": "Source"
+      },
+      "StockCount": {
+        "properties": {
+          "event_name": {
+            "type": "string",
+            "maxLength": 36,
+            "minLength": 1,
+            "title": "Event Name",
+            "description": "Name of the event and corresponding schema.",
+            "default": "stock_count"
+          },
+          "product_id": {
+            "$ref": "#/components/schemas/ProductIdentifier",
+            "description": "The ID of the product."
+          },
+          "location_id": {
+            "type": "string",
+            "maxLength": 500,
+            "title": "Location Id",
+            "description": "The ID of the retail location."
+          },
+          "quantity_sellable": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Quantity Sellable",
+            "description": "The quantity of the product at the retail location available for sale."
+          },
+          "availability": {
+            "$ref": "#/components/schemas/AvailablityTypes",
+            "description": "The quantity of the product at the retail location available for sale."
+          },
+          "list_price": {
+            "type": "number",
+            "title": "List Price",
+            "description": "The list price of the product at the retail location."
+          },
+          "counted_at": {
+            "type": "string",
+            "maxLength": 30,
+            "minLength": 4,
+            "title": "Counted At",
+            "description": "The time the stock count was taken. This should be a string in ISO 8601 format. If not provided, the time of the event will be used."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["product_id", "location_id", "availability", "list_price"],
+        "title": "StockCount",
+        "description": "The stock count of a product at a retail location.",
+        "examples": [
+          {
+            "data": {
+              "availability": "in_stock",
+              "counted_at": "2023-06-06T03:47:36+0000",
+              "list_price": 539,
+              "location_id": "12345",
+              "product_id": {
+                "system": "product_system",
+                "type": "product_id",
+                "value": "2045"
+              },
+              "quantity_sellable": 42
+            },
+            "schema": "iglu:com.zitcha/stock_count/jsonschema/1-0-0"
+          }
+        ]
+      },
+      "VideoAdProgress": {
+        "properties": {
+          "customer_identifiers": {
+            "items": {
+              "$ref": "#/components/schemas/CustomerIdentifierItem"
+            },
+            "type": "array",
+            "title": "Customer Identifiers",
+            "description": "A list of identifiers for the customer generating the event."
+          },
+          "page_view_id": {
+            "type": "string",
+            "maxLength": 36,
+            "minLength": 1,
+            "title": "Page View Id",
+            "description": "A globally unique identifier for the PageView."
+          },
+          "page_location": {
+            "type": "string",
+            "title": "Page Location",
+            "description": "The location that the page was visited."
+          },
+          "placement_id": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Placement Id",
+            "description": "The Webspace ID or Block ID."
+          },
+          "ad_id": {
+            "type": "string",
+            "maxLength": 36,
+            "minLength": 32,
+            "title": "Ad Id",
+            "description": "The Zitcha Ad Id that this video is associated with."
+          },
+          "video_current_time": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Video Current Time",
+            "description": "The current time of the video in seconds."
+          },
+          "video_duration": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Video Duration",
+            "description": "The video duration in seconds."
+          },
+          "video_percent": {
+            "type": "number",
+            "maximum": 100,
+            "minimum": 0,
+            "title": "Video Percent",
+            "description": "The percentage of video watched."
+          },
+          "video_provider": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4096
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Video Provider",
+            "description": "The video provider."
+          },
+          "video_format": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4096
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Video Format",
+            "description": "The video provider."
+          },
+          "video_title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4096
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Video Title",
+            "description": "The video title."
+          },
+          "video_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4096
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Video Url",
+            "description": "The video url."
+          },
+          "ad_format": {
+            "$ref": "#/components/schemas/AdFormat",
+            "description": "The ad format."
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source",
+            "description": "The source where the ad was targeted."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "customer_identifiers",
+          "page_view_id",
+          "page_location",
+          "placement_id",
+          "ad_id",
+          "ad_format",
+          "source"
+        ],
+        "title": "VideoAdProgress",
+        "description": "The VideoAdProgress event is fired during video playback.",
+        "examples": [
+          {
+            "data": {
+              "ad_format": "native_banner",
+              "ad_id": "b77a72db-06b4-4983-a25b-3a4e98a6ad8a",
+              "customer_identifiers": [
+                {
+                  "system": "local_storage",
+                  "type": "browser_id",
+                  "value": "mawhsxpmzr.1685916038987"
+                }
+              ],
+              "page_location": "https://www.example.com/awesome-page",
+              "page_view_id": "996e772a-6a4d-41b1-89d0-5110af299d87",
+              "placement_id": "4a0932ae-c9de-4a45-bb69-50cef8813763",
+              "source": "web",
+              "video_current_time": 30,
+              "video_duration": 120,
+              "video_format": "mp4",
+              "video_percent": 25,
+              "video_provider": "YouTube",
+              "video_title": "My Awesome Video",
+              "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            },
+            "schema": "iglu:com.zitcha/video_ad_progress/jsonschema/1-0-7"
+          }
+        ]
+      },
+      "VideoAdStart": {
+        "properties": {
+          "customer_identifiers": {
+            "items": {
+              "$ref": "#/components/schemas/CustomerIdentifierItem"
+            },
+            "type": "array",
+            "title": "Customer Identifiers",
+            "description": "A list of identifiers for the customer generating the event."
+          },
+          "page_view_id": {
+            "type": "string",
+            "maxLength": 36,
+            "minLength": 1,
+            "title": "Page View Id",
+            "description": "A globally unique identifier for the PageView."
+          },
+          "placement_id": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Placement Id",
+            "description": "The Webspace ID or Block ID."
+          },
+          "page_location": {
+            "type": "string",
+            "title": "Page Location",
+            "description": "The location that the page was visited."
+          },
+          "ad_id": {
+            "type": "string",
+            "maxLength": 36,
+            "minLength": 32,
+            "title": "Ad Id",
+            "description": "The Zitcha Ad Id that this video is associated with."
+          },
+          "video_provider": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4096
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Video Provider",
+            "description": "The video provider."
+          },
+          "video_format": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4096
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Video Format",
+            "description": "The video provider."
+          },
+          "video_title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4096
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Video Title",
+            "description": "The video title."
+          },
+          "video_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4096
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Video Url",
+            "description": "The video url."
+          },
+          "ad_format": {
+            "$ref": "#/components/schemas/AdFormat",
+            "description": "The ad format."
+          },
+          "source": {
+            "$ref": "#/components/schemas/Source",
+            "description": "The source where the ad was targeted."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "customer_identifiers",
+          "page_view_id",
+          "placement_id",
+          "page_location",
+          "ad_id",
+          "video_url",
+          "ad_format",
+          "source"
+        ],
+        "title": "VideoAdStart",
+        "description": "The VideoAdStart event is fired when a video ad starts playing.",
+        "examples": [
+          {
+            "data": {
+              "ad_format": "native_banner",
+              "ad_id": "b77a72db-06b4-4983-a25b-3a4e98a6ad8a",
+              "customer_identifiers": [
+                {
+                  "system": "local_storage",
+                  "type": "browser_id",
+                  "value": "mawhsxpmzr.1685916038987"
+                }
+              ],
+              "page_location": "https://www.example.com/awesome-page",
+              "page_view_id": "996e772a-6a4d-41b1-89d0-5110af299d87",
+              "placement_id": "4a0932ae-c9de-4a45-bb69-50cef8813763",
+              "source": "web",
+              "video_format": "mp4",
+              "video_provider": "YouTube",
+              "video_title": "My Awesome Video",
+              "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            },
+            "schema": "iglu:com.zitcha/video_ad_start/jsonschema/1-0-7"
+          }
+        ]
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Ad Events",
+      "description": "Events collected through delivery of advertisements."
+    },
+    {
+      "name": "Retail Events",
+      "description": "Events collected through retail operations."
+    }
+  ]
+}
