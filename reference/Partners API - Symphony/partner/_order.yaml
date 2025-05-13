@@ -1,0 +1,5 @@
+- get-partner
+- get-webhooks
+- create-webhook
+- update-webhook
+- delete-webhook
