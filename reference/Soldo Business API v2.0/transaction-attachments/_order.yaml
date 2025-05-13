@@ -1,0 +1,6 @@
+- transaction-attachment-search
+- transaction-attachment-upload
+- transaction-attachment-delete
+- transaction-attachment-get
+- transaction-attachment-upload-confirm
+- transaction-attachment-metadata-update

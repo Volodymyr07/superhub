@@ -1,0 +1,7 @@
+- group-search
+- group-add
+- group-delete
+- group-get
+- group-update
+- group-resource-remove
+- group-resource-add

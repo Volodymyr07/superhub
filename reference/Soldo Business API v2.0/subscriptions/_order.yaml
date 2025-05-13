@@ -1,0 +1,8 @@
+- subscription-search
+- subscription-add
+- subscription-delete
+- subscription-get
+- subscription-activate
+- subscription-update
+- subscription-assignees-add
+- subscription-assignees-remove

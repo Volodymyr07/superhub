@@ -1,0 +1,12 @@
+- card-rules-get
+- card-rules-set
+- card-rule-cashpoint-get
+- card-rule-cashpoint-unset
+- card-rule-cashpoint-set
+- card-rule-countries-get
+- card-rule-countries-set
+- card-rule-merchant-categories-get
+- card-rule-merchant-categories-set
+- card-rule-spending-limits-get
+- card-rule-spending-limits-unset
+- card-rule-spending-limits-set

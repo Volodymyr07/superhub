@@ -1,0 +1,5 @@
+- resource-set-search
+- resource-set-add
+- resource-set-delete
+- resource-set-get
+- resource-set-update

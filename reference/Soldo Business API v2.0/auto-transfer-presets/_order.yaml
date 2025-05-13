@@ -1,0 +1,5 @@
+- wallet-auto-transfer-presets-search
+- wallet-auto-transfer-preset-get
+- wallet-auto-transfer-preset-set
+- wallet-auto-transfer-preset-unset
+- wallet-auto-transfer-preset-delete
